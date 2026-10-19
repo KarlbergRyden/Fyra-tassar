@@ -1,0 +1,28 @@
+---
+/** Responsiv bild med angivna dimensioner (ingen layoutförskjutning). Lazy som standard. */
+import { bild, standardAlt, type BildNamn } from '../data/bilder';
+
+interface Props {
+  namn: BildNamn;
+  alt?: string;
+  sizes?: string;
+  /** Hjälte-/ovanför-vecket-bild: laddas direkt med hög prioritet */
+  prioritet?: boolean;
+  class?: string;
+}
+const { namn, alt = standardAlt[namn], sizes = '100vw', prioritet = false, class: klass } = Astro.props;
+const b = bild(namn);
+---
+
+<img
+  class={klass}
+  src={b.src}
+  srcset={b.srcset}
+  sizes={sizes}
+  width={b.width}
+  height={b.height}
+  alt={alt}
+  loading={prioritet ? 'eager' : 'lazy'}
+  decoding={prioritet ? 'sync' : 'async'}
+  fetchpriority={prioritet ? 'high' : undefined}
+/>

@@ -1,0 +1,35 @@
+---
+/** "Öppet nu / Stängt" – beräknas i webbläsaren utifrån öppettiderna i site.ts. */
+import { site } from '../data/site';
+---
+
+<p
+  class="status mb-0"
+  data-status
+  data-oppettider={JSON.stringify(site.oppettider)}
+  data-undantag={JSON.stringify(site.undantag)}
+  hidden
+>
+  <span class="status__dot" aria-hidden="true"></span>
+  <span data-status-text></span>
+</p>
+
+<script>
+  import { oppetStatus } from '../lib/oppettider';
+
+  function uppdatera() {
+    document.querySelectorAll<HTMLElement>('[data-status]').forEach((el) => {
+      const s = oppetStatus(
+        new Date(),
+        JSON.parse(el.dataset.oppettider ?? '[]'),
+        JSON.parse(el.dataset.undantag ?? '[]'),
+      );
+      el.dataset.oppet = String(s.oppet);
+      const text = el.querySelector('[data-status-text]');
+      if (text) text.textContent = s.text;
+      el.hidden = false;
+    });
+  }
+  uppdatera();
+  setInterval(uppdatera, 60_000);
+</script>

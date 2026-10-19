@@ -1,0 +1,141 @@
+---
+import Bas from '../layouts/Bas.astro';
+import Icon from '../components/Icon.astro';
+import PageBanner from '../components/PageBanner.astro';
+import { aktivaErbjudanden, besparing } from '../data/erbjudanden';
+import { reserveraLank } from '../lib/formular';
+import { site } from '../data/site';
+
+const erbjudanden = aktivaErbjudanden();
+const facebook = site.sociala.find((s) => s.namn === 'Facebook')!;
+
+const regler = [
+  { stor: 'Gäller i butiken', text: 'Priserna gäller hos oss på Hantverkargatan. Vi har ingen webbutik.' },
+  { stor: 'Fler erbjudanden', text: 'Vi lägger ut erbjudanden löpande på vår Facebooksida.' },
+  { stor: 'Fråga oss', text: `Undrar du över ett erbjudande? Ring ${site.telefon.visning}.` },
+];
+---
+
+<Bas
+  title="Erbjudanden på hund- och kattfoder"
+  description="Aktuella foderkampanjer hos Fyra Tassar i Borlänge: FourFriends, HappyDog, Happycat och Taste of the Wild till kampanjpris."
+>
+  <div class="page-dark">
+    <PageBanner
+      titel="Foderkampanjer i butiken"
+      ingress="Kampanjpriser på torrfoder till hund och katt. Se vad du sparar och kom förbi."
+      steg={[{ text: 'Erbjudanden' }]}
+      etikett="Erbjudanden"
+    >
+      <a class="btn" href={site.adress.kartaUrl} target="_blank" rel="noopener noreferrer" data-spor="karta"
+        ><Icon namn="pin" storlek={18} />Hitta hit<span class="sr-only"> (öppnas i ny flik)</span></a
+      >
+      <a class="btn btn--light" href={facebook.url} target="_blank" rel="noopener noreferrer"
+        ><Icon namn="facebook" storlek={18} />Följ oss<span class="sr-only"> (öppnas i ny flik)</span></a
+      >
+    </PageBanner>
+
+    <section class="section" aria-labelledby="erbj-rubrik">
+      <div class="container">
+        <div class="section-head" data-reveal>
+          <div>
+            <p class="eyebrow"><Icon namn="tag" storlek={18} />Just nu</p>
+            <h2 id="erbj-rubrik">Aktuella kampanjer</h2>
+          </div>
+          <p>Välj hund eller katt för att se just de erbjudandena.</p>
+        </div>
+
+        {
+          erbjudanden.length > 0 ? (
+            <>
+              <div class="filter" role="group" aria-label="Visa erbjudanden för" data-filter hidden>
+                <button class="filter__btn" type="button" data-visa="alla" aria-pressed="true">Alla</button>
+                <button class="filter__btn" type="button" data-visa="hund" aria-pressed="false">Hund</button>
+                <button class="filter__btn" type="button" data-visa="katt" aria-pressed="false">Katt</button>
+                <span class="filter__antal" role="status" data-antal></span>
+              </div>
+
+              <div class="deal-grid" data-reveal-stagger>
+                {erbjudanden.map((e) => {
+                  const b = besparing(e);
+                  return (
+                    <article class="deal-xl" data-djur={e.djur.join(' ')} data-deal data-spot>
+                      <div class="deal-xl__top">
+                        <span class="badge">{e.djur.map((d) => (d === 'hund' ? 'Hund' : 'Katt')).join(' · ')}</span>
+                        <span class="deal-xl__spar">
+                          Spara {b.minst ? 'minst ' : ''}{b.kr} kr
+                        </span>
+                      </div>
+                      <h3>{e.namn}</h3>
+                      <p>{e.detalj}</p>
+                      <div class="deal-xl__prices">
+                        <span class="deal-xl__pris">{e.pris}<span> kr</span></span>
+                        <span class="deal-xl__old">
+                          <span class="sr-only">Ordinarie pris </span>
+                          {e.franPris ? 'från ' : ''}
+                          {e.ordinarie} kr
+                        </span>
+                      </div>
+                      <a class="btn btn--light btn--sm deal-xl__fraga" href={reserveraLank(e.namn)} data-spor="reservera">
+                        Fråga / reservera<span class="sr-only"> – {e.namn}</span>
+                      </a>
+                    </article>
+                  );
+                })}
+              </div>
+            </>
+          ) : (
+            <div class="card">
+              <h3>Inga kampanjer just nu</h3>
+              <p>
+                Just nu har vi inga foderkampanjer här på sidan. Följ oss på Facebook eller fråga i butiken om aktuella
+                erbjudanden.
+              </p>
+            </div>
+          )
+        }
+      </div>
+    </section>
+
+    <section class="section section--tint" aria-labelledby="regler-rubrik">
+      <div class="container">
+        <div class="section-head" data-reveal>
+          <div>
+            <p class="eyebrow">Så fungerar det</p>
+            <h2 id="regler-rubrik">Enkelt och tydligt</h2>
+          </div>
+        </div>
+        <ul class="facts" data-reveal-stagger>
+          {regler.map((r) => <li><strong>{r.stor}</strong><p>{r.text}</p></li>)}
+        </ul>
+        <div class="btn-row mt-6">
+          <a class="btn" href="/produkter/">Se hela sortimentet</a>
+          <a class="btn btn--light" href={site.telefon.href} data-spor="ring"><Icon namn="phone" storlek={18} />Ring {site.telefon.visning}</a>
+        </div>
+      </div>
+    </section>
+  </div>
+</Bas>
+
+<script>
+  // Filter: hund/katt, med antal som skärmläsare får höra. Utan JS visas alla erbjudanden.
+  const filter = document.querySelector<HTMLElement>('[data-filter]');
+  if (filter) {
+    filter.hidden = false;
+    const knappar = filter.querySelectorAll<HTMLButtonElement>('[data-visa]');
+    const kort = [...document.querySelectorAll<HTMLElement>('[data-deal]')];
+    const antal = filter.querySelector<HTMLElement>('[data-antal]');
+    const visa = (vad: string) => {
+      let n = 0;
+      knappar.forEach((k) => k.setAttribute('aria-pressed', String(k.dataset.visa === vad)));
+      for (const k of kort) {
+        const synlig = vad === 'alla' || (k.dataset.djur ?? '').split(' ').includes(vad);
+        k.hidden = !synlig;
+        if (synlig) n++;
+      }
+      if (antal) antal.textContent = `Visar ${n} ${n === 1 ? 'erbjudande' : 'erbjudanden'}`;
+    };
+    knappar.forEach((k) => k.addEventListener('click', () => visa(k.dataset.visa!)));
+    visa('alla');
+  }
+</script>

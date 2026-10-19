@@ -1,0 +1,33 @@
+---
+import Bas from '../layouts/Bas.astro';
+import PageBanner from '../components/PageBanner.astro';
+import { site } from '../data/site';
+---
+
+<Bas
+  title="Sidan hittades inte"
+  description="Sidan du letar efter finns inte. Gå till startsidan, produkterna eller kontakta Fyra Tassar i Borlänge."
+  noindex
+>
+  <div class="page-dark">
+  <PageBanner
+    titel="Den här sidan hittades inte"
+    ingress="Länken kan vara gammal eller felstavad. Här är några ställen att börja på."
+    steg={[{ text: 'Fel 404' }]}
+    etikett="Fel 404"
+  >
+    <a class="btn" href="/">Till startsidan</a>
+    <a class="btn btn--light" href="/produkter/">Se produkter</a>
+    <a class="btn btn--light" href="/tjanster/">Se tjänster</a>
+    <a class="btn btn--light" href="/kontakt/">Kontakta oss</a>
+  </PageBanner>
+
+  <section class="section--tight">
+    <div class="container container--narrow">
+      <p class="text-soft">
+        Eller ring oss på <a href={site.telefon.href}>{site.telefon.visning}</a>.
+      </p>
+    </div>
+  </section>
+  </div>
+</Bas>

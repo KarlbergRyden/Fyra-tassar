@@ -1,0 +1,18 @@
+---
+interface Props {
+  steg: { titel: string; text: string }[];
+  rad?: boolean;
+}
+const { steg, rad = true } = Astro.props;
+---
+
+<ol class:list={['steps', rad && 'steps--row']} style={`--cols: ${steg.length}`}>
+  {
+    steg.map((s) => (
+      <li>
+        <h3>{s.titel}</h3>
+        <p>{s.text}</p>
+      </li>
+    ))
+  }
+</ol>

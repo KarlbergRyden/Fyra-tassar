@@ -1,0 +1,208 @@
+{
+  "logo": [
+    {
+      "fil": "/images/logo-320.webp",
+      "bredd": 320,
+      "hojd": 224,
+      "kb": 11
+    },
+    {
+      "fil": "/images/logo-640.webp",
+      "bredd": 640,
+      "hojd": 447,
+      "kb": 25
+    }
+  ],
+  "hero": [
+    {
+      "fil": "/images/hero-640.webp",
+      "bredd": 640,
+      "hojd": 360,
+      "kb": 27
+    },
+    {
+      "fil": "/images/hero-1280.webp",
+      "bredd": 1280,
+      "hojd": 720,
+      "kb": 82
+    },
+    {
+      "fil": "/images/hero-1920.webp",
+      "bredd": 1920,
+      "hojd": 1080,
+      "kb": 153
+    }
+  ],
+  "kursband": [
+    {
+      "fil": "/images/kursband-640.webp",
+      "bredd": 640,
+      "hojd": 360,
+      "kb": 15
+    },
+    {
+      "fil": "/images/kursband-1280.webp",
+      "bredd": 1280,
+      "hojd": 720,
+      "kb": 43
+    },
+    {
+      "fil": "/images/kursband-1920.webp",
+      "bredd": 1920,
+      "hojd": 1080,
+      "kb": 75
+    }
+  ],
+  "fragaband": [
+    {
+      "fil": "/images/fragaband-640.webp",
+      "bredd": 640,
+      "hojd": 250,
+      "kb": 9
+    },
+    {
+      "fil": "/images/fragaband-1280.webp",
+      "bredd": 1280,
+      "hojd": 500,
+      "kb": 30
+    },
+    {
+      "fil": "/images/fragaband-1920.webp",
+      "bredd": 1920,
+      "hojd": 750,
+      "kb": 117
+    }
+  ],
+  "bannerHund": [
+    {
+      "fil": "/images/bannerHund-750.webp",
+      "bredd": 750,
+      "hojd": 500,
+      "kb": 21
+    },
+    {
+      "fil": "/images/bannerHund-1500.webp",
+      "bredd": 1500,
+      "hojd": 1000,
+      "kb": 62
+    }
+  ],
+  "bannerSkog": [
+    {
+      "fil": "/images/bannerSkog-750.webp",
+      "bredd": 750,
+      "hojd": 500,
+      "kb": 20
+    },
+    {
+      "fil": "/images/bannerSkog-1500.webp",
+      "bredd": 1500,
+      "hojd": 1000,
+      "kb": 113
+    }
+  ],
+  "bannerKatt": [
+    {
+      "fil": "/images/bannerKatt-750.webp",
+      "bredd": 750,
+      "hojd": 500,
+      "kb": 22
+    },
+    {
+      "fil": "/images/bannerKatt-1500.webp",
+      "bredd": 1500,
+      "hojd": 1000,
+      "kb": 59
+    }
+  ],
+  "rottweiler": [
+    {
+      "fil": "/images/rottweiler-480.webp",
+      "bredd": 480,
+      "hojd": 480,
+      "kb": 22
+    },
+    {
+      "fil": "/images/rottweiler-800.webp",
+      "bredd": 800,
+      "hojd": 800,
+      "kb": 49
+    }
+  ],
+  "katt": [
+    {
+      "fil": "/images/katt-480.webp",
+      "bredd": 480,
+      "hojd": 480,
+      "kb": 13
+    },
+    {
+      "fil": "/images/katt-800.webp",
+      "bredd": 800,
+      "hojd": 800,
+      "kb": 26
+    }
+  ],
+  "bordercollie": [
+    {
+      "fil": "/images/bordercollie-480.webp",
+      "bredd": 480,
+      "hojd": 480,
+      "kb": 39
+    },
+    {
+      "fil": "/images/bordercollie-800.webp",
+      "bredd": 800,
+      "hojd": 800,
+      "kb": 91
+    }
+  ],
+  "team": [
+    {
+      "fil": "/images/team-640.webp",
+      "bredd": 640,
+      "hojd": 485,
+      "kb": 41
+    },
+    {
+      "fil": "/images/team-1200.webp",
+      "bredd": 1200,
+      "hojd": 910,
+      "kb": 99
+    }
+  ],
+  "kursledare": [
+    {
+      "fil": "/images/kursledare-640.webp",
+      "bredd": 640,
+      "hojd": 427,
+      "kb": 21
+    },
+    {
+      "fil": "/images/kursledare-1280.webp",
+      "bredd": 1280,
+      "hojd": 854,
+      "kb": 69
+    },
+    {
+      "fil": "/images/kursledare-1920.webp",
+      "bredd": 1919,
+      "hojd": 1281,
+      "kb": 126
+    }
+  ],
+  "logoBanner": [
+    {
+      "fil": "/images/logoBanner-240.webp",
+      "bredd": 240,
+      "hojd": 194,
+      "kb": 7
+    },
+    {
+      "fil": "/images/logoBanner-480.webp",
+      "bredd": 480,
+      "hojd": 389,
+      "kb": 17
+    }
+  ]
+}

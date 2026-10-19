@@ -1,0 +1,283 @@
+---
+import { site } from '../data/site';
+
+interface Props {
+  id?: string;
+}
+const { id = 'kontaktformular' } = Astro.props;
+const endpoint = site.formularEndpoint;
+---
+
+<div class="form-wrap" data-form-wrap data-epost={site.epost} data-endpoint={endpoint} data-nyckel={site.formularNyckel}>
+  <div class="alert alert--ok" role="status" tabindex="-1" data-ok hidden>
+    <h3 data-ok-rubrik>Tack för ditt meddelande!</h3>
+    <p data-ok-text>
+      Vi läser det och svarar dig via e-post eller telefon. Behöver du hjälp snabbare kan du ringa oss på
+      <a href={site.telefon.href}>{site.telefon.visning}</a>.
+    </p>
+  </div>
+
+  <div class="alert alert--error" role="alert" tabindex="-1" data-serverfel hidden>
+    <h3>Det gick inte att skicka meddelandet</h3>
+    <p>
+      Något gick fel. Dina uppgifter finns kvar i formuläret. Försök igen, eller kontakta oss direkt på
+      <a href={site.telefon.href}>{site.telefon.visning}</a> eller
+      <a href={`mailto:${site.epost}`}>{site.epost}</a>.
+    </p>
+  </div>
+
+  <form
+    id={id}
+    class="form"
+    method="post"
+    action={endpoint || undefined}
+    novalidate
+    data-kontaktform
+    aria-describedby={`${id}-info`}
+  >
+    <p id={`${id}-info`} class="text-soft mb-0">
+      Fält markerade med <span aria-hidden="true">*</span><span class="sr-only">stjärna</span> är obligatoriska.
+      Vi använder uppgifterna bara för att svara på ditt meddelande.
+    </p>
+
+    <div class="alert alert--error error-summary" role="alert" tabindex="-1" data-sammanfattning>
+      <h3>Kontrollera formuläret</h3>
+      <ul data-sammanfattning-lista></ul>
+    </div>
+
+    <div class="field">
+      <label for={`${id}-namn`}>Namn <span aria-hidden="true">*</span></label>
+      <input
+        class="input"
+        type="text"
+        id={`${id}-namn`}
+        name="namn"
+        autocomplete="name"
+        required
+        aria-describedby={`${id}-namn-fel`}
+      />
+      <p class="error" id={`${id}-namn-fel`} data-fel-for="namn"></p>
+    </div>
+
+    <div class="field">
+      <label for={`${id}-epost`}>E-post <span aria-hidden="true">*</span></label>
+      <input
+        class="input"
+        type="email"
+        id={`${id}-epost`}
+        name="epost"
+        autocomplete="email"
+        inputmode="email"
+        required
+        aria-describedby={`${id}-epost-hint ${id}-epost-fel`}
+      />
+      <p class="hint" id={`${id}-epost-hint`}>Hit skickar vi svaret.</p>
+      <p class="error" id={`${id}-epost-fel`} data-fel-for="epost"></p>
+    </div>
+
+    <div class="field">
+      <label for={`${id}-telefon`}>Telefon <span class="optional">(valfritt)</span></label>
+      <input
+        class="input"
+        type="tel"
+        id={`${id}-telefon`}
+        name="telefon"
+        autocomplete="tel"
+        inputmode="tel"
+        aria-describedby={`${id}-telefon-fel`}
+      />
+      <p class="error" id={`${id}-telefon-fel`} data-fel-for="telefon"></p>
+    </div>
+
+    <div class="field">
+      <label for={`${id}-meddelande`}>Meddelande <span aria-hidden="true">*</span></label>
+      <textarea
+        class="input"
+        id={`${id}-meddelande`}
+        name="meddelande"
+        rows="6"
+        required
+        maxlength="2000"
+        aria-describedby={`${id}-meddelande-fel`}></textarea>
+      <p class="error" id={`${id}-meddelande-fel`} data-fel-for="meddelande"></p>
+      <p class="hint hint--raknare" aria-hidden="true" data-raknare>0 / 2000</p>
+    </div>
+
+    <!-- Skräpskydd: dolt fält som riktiga besökare aldrig fyller i -->
+    <div class="hp" aria-hidden="true">
+      <label for={`${id}-webbplats`}>Lämna detta fält tomt</label>
+      <input type="text" id={`${id}-webbplats`} name="webbplats" tabindex="-1" autocomplete="off" />
+    </div>
+
+    <div class="field">
+      <div class="check">
+        <input
+          type="checkbox"
+          id={`${id}-samtycke`}
+          name="samtycke"
+          required
+          aria-describedby={`${id}-samtycke-fel`}
+        />
+        <label for={`${id}-samtycke`} style="font-weight: 500">
+          Jag förstår att Fyra Tassar i Borlänge hanterar mina uppgifter för att kunna svara på
+          meddelandet. Läs mer i <a href="/integritet/">integritetspolicyn</a>.
+          <span aria-hidden="true">*</span>
+        </label>
+      </div>
+      <p class="error" id={`${id}-samtycke-fel`} data-fel-for="samtycke"></p>
+    </div>
+
+    <div>
+      <button class="btn" type="submit" data-skicka data-spor="formular-skicka">Skicka meddelande</button>
+    </div>
+  </form>
+</div>
+
+<script>
+  import { byggMailto, forifyllMeddelande, validera, type FaltNamn, type Formularvarden } from '../lib/formular';
+
+  const wrap = document.querySelector<HTMLElement>('[data-form-wrap]');
+  const form = wrap?.querySelector<HTMLFormElement>('[data-kontaktform]');
+
+  if (wrap && form) {
+    const endpoint = wrap.dataset.endpoint ?? '';
+    const epost = wrap.dataset.epost ?? '';
+    const nyckel = wrap.dataset.nyckel ?? '';
+    const ok = wrap.querySelector<HTMLElement>('[data-ok]')!;
+    const okText = wrap.querySelector<HTMLElement>('[data-ok-text]')!;
+    const serverfel = wrap.querySelector<HTMLElement>('[data-serverfel]')!;
+    const sammanfattning = wrap.querySelector<HTMLElement>('[data-sammanfattning]')!;
+    const lista = wrap.querySelector<HTMLElement>('[data-sammanfattning-lista]')!;
+    const skicka = form.querySelector<HTMLButtonElement>('[data-skicka]')!;
+    const falt: FaltNamn[] = ['namn', 'epost', 'telefon', 'meddelande', 'samtycke'];
+
+    const element = (n: FaltNamn) =>
+      form.elements.namedItem(n) as HTMLInputElement | HTMLTextAreaElement;
+
+    const varden = (): Formularvarden => ({
+      namn: element('namn').value,
+      epost: element('epost').value,
+      telefon: element('telefon').value,
+      meddelande: element('meddelande').value,
+      samtycke: (element('samtycke') as HTMLInputElement).checked,
+    });
+
+    function visaFel(fel: Partial<Record<FaltNamn, string>>) {
+      lista.replaceChildren();
+      for (const n of falt) {
+        const el = element(n);
+        const ut = form!.querySelector<HTMLElement>(`[data-fel-for="${n}"]`)!;
+        const msg = fel[n];
+        ut.textContent = msg ?? '';
+        ut.dataset.visible = String(Boolean(msg));
+        if (msg) {
+          el.setAttribute('aria-invalid', 'true');
+          const li = document.createElement('li');
+          const a = document.createElement('a');
+          a.href = `#${el.id}`;
+          a.textContent = msg;
+          a.addEventListener('click', (e) => {
+            e.preventDefault();
+            el.focus();
+          });
+          li.append(a);
+          lista.append(li);
+        } else {
+          el.removeAttribute('aria-invalid');
+        }
+      }
+      sammanfattning.dataset.visible = String(Object.keys(fel).length > 0);
+    }
+
+    // Rätta fel direkt när användaren åtgärdat ett fält
+    form.addEventListener('input', (e) => {
+      const mal = e.target as HTMLInputElement;
+      if (mal.getAttribute('aria-invalid') !== 'true') return;
+      const namn = mal.name as FaltNamn;
+      if (validera(varden())[namn]) return;
+      mal.removeAttribute('aria-invalid');
+      const ut = form.querySelector<HTMLElement>(`[data-fel-for="${namn}"]`)!;
+      ut.textContent = '';
+      ut.dataset.visible = 'false';
+      lista.querySelector(`a[href="#${mal.id}"]`)?.parentElement?.remove();
+      if (!lista.children.length) sammanfattning.dataset.visible = 'false';
+    });
+
+    // Teckenräknare för meddelandet
+    const raknare = form.querySelector<HTMLElement>('[data-raknare]');
+    const meddelande = element('meddelande');
+    const uppdateraRaknare = () => {
+      if (raknare) raknare.textContent = `${meddelande.value.length} / 2000`;
+    };
+    meddelande.addEventListener('input', uppdateraRaknare);
+
+    // Länkar från kampanjer ("Fråga / reservera") förifyller meddelandet
+    const forifyll = forifyllMeddelande(location.search);
+    if (forifyll && !meddelande.value) {
+      meddelande.value = forifyll;
+      uppdateraRaknare();
+      if (location.hash === '#kontaktformular') {
+        meddelande.focus();
+        meddelande.setSelectionRange(forifyll.length, forifyll.length);
+      }
+    }
+
+    function lyckat(tex?: string) {
+      form!.hidden = true;
+      serverfel.hidden = true;
+      if (tex) okText.innerHTML = tex;
+      ok.hidden = false;
+      ok.focus();
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      serverfel.hidden = true;
+      const v = varden();
+      const fel = validera(v);
+      visaFel(fel);
+      if (Object.keys(fel).length > 0) {
+        sammanfattning.focus();
+        return;
+      }
+
+      // Skräpskydd: låtsas lyckas
+      if ((form.elements.namedItem('webbplats') as HTMLInputElement).value) {
+        lyckat();
+        return;
+      }
+
+      if (!endpoint) {
+        // Ingen formulärtjänst konfigurerad → öppna besökarens e-postprogram
+        window.location.href = byggMailto(epost, v);
+        lyckat(
+          `Ditt e-postprogram ska nu öppnas med meddelandet ifyllt. Tryck på <strong>Skicka</strong> där så når det oss. Öppnades inget? Mejla <a href="mailto:${epost}">${epost}</a> direkt eller ring oss.`,
+        );
+        return;
+      }
+
+      skicka.disabled = true;
+      skicka.textContent = 'Skickar …';
+      try {
+        const svar = await fetch(endpoint, {
+          method: 'POST',
+          headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...v,
+            samtycke: undefined,
+            subject: 'Meddelande från webbplatsen',
+            ...(nyckel ? { access_key: nyckel } : {}),
+          }),
+        });
+        if (!svar.ok) throw new Error(String(svar.status));
+        lyckat();
+      } catch {
+        serverfel.hidden = false;
+        serverfel.focus();
+      } finally {
+        skicka.disabled = false;
+        skicka.textContent = 'Skicka meddelande';
+      }
+    });
+  }
+</script>

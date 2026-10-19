@@ -1,0 +1,320 @@
+---
+import Bas from '../layouts/Bas.astro';
+import Icon from '../components/Icon.astro';
+import Bild from '../components/Bild.astro';
+import OppetNu from '../components/OppetNu.astro';
+import Oppettider from '../components/Oppettider.astro';
+import Faq from '../components/Faq.astro';
+import SlutCta from '../components/SlutCta.astro';
+import Omdomen from '../components/Omdomen.astro';
+import { site, adressRad } from '../data/site';
+import { hittaTjanst } from '../data/tjanster';
+import { aktivaErbjudanden } from '../data/erbjudanden';
+import { faq } from '../data/faq';
+
+const klo = hittaTjanst('kloklippning')!;
+const erbjudanden = aktivaErbjudanden();
+const startFaq = faq.filter((f) => f.startsida);
+
+// Rubriken delas upp i ord som glider in ett i taget
+const rubrik = [{ t: 'Allt' }, { t: 'till' }, { t: 'din' }, { t: 'hund' }, { t: 'och' }, { t: 'katt' }];
+
+const glasKort = [
+  { ikon: 'scissors', namn: 'Kloklippning', text: '160 kr · boka online', href: '/tjanster/kloklippning/' },
+  { ikon: 'paw', namn: 'Hundtrim', text: 'Även kattklippning', href: '/tjanster/hundtrim/' },
+  { ikon: 'heart', namn: 'Hundfriskvård', text: 'Massage, laser, elektroterapi', href: '/tjanster/hundfriskvard/' },
+  { ikon: 'cap', namn: 'Hundkurser', text: 'Anmäl i butiken', href: '/kurser/' },
+];
+
+// 1. Sortiment: två vägar in, hund eller katt
+const sortiment = [
+  {
+    id: 'hund',
+    bild: 'rottweiler' as const,
+    alt: 'Rottweiler som ligger i gräset med en leksak',
+    namn: 'Hund',
+    text: 'Foder, koppel, selar, sängar och träningsutrustning.',
+  },
+  {
+    id: 'katt',
+    bild: 'katt' as const,
+    alt: 'Katt som slickar sig om munnen bredvid en matskål',
+    namn: 'Katt',
+    text: 'Foder, kattsand, klösträd, leksaker och sängar.',
+  },
+];
+
+// 2. Tjänster: välj och boka
+const tjanstRader = [
+  { nr: '01', namn: 'Kloklippning', text: 'Tidsbokad och betald i förväg med Klarna.', meta: klo.pris.rubrik, href: '/tjanster/kloklippning/', boka: true },
+  { nr: '02', namn: 'Hundtrim', text: 'Vardagstrim efter dina önskemål. Även kattklippning.', meta: 'Anna-Lena’s hundtrim', href: '/tjanster/hundtrim/', boka: false },
+  { nr: '03', namn: 'Hundfriskvård', text: 'Massage, laser och elektroterapi för hunden.', meta: 'Nillans hundhälsa', href: '/tjanster/hundfriskvard/', boka: false },
+  { nr: '04', namn: 'Hundkurser', text: 'Anmälan i butiken eller via Facebook.', meta: 'Butiken', href: '/kurser/', boka: false },
+];
+
+// 3. Varför: fyra konkreta fakta
+const fakta = [
+  { stor: '20 år', text: 'i djurbutik. Butiksägaren har även utbildning i foderlära.' },
+  { stor: 'Vi beställer hem', text: 'det vi inte har i butiken, om det går.' },
+  { stor: 'Hos tillverkarna', text: 'Personalen har besökt Fourfriends i Prag och Profines tillverkning.' },
+  { stor: 'Gratis parkering', text: 'direkt utanför butiken.' },
+];
+---
+
+<Bas
+  heltTitel
+  title="Fyra Tassar i Borlänge – foder, tillbehör och hundtjänster"
+  description="Den personliga djurbutiken i Borlänge. Foder och tillbehör till hund och katt, kloklippning, hundtrim, hundkurser och friskvård för hund. Gratis parkering utanför."
+>
+  <div class="page-dark">
+  <!-- ================= HERO ================= -->
+  <section class="hero-photo on-dark" aria-labelledby="hero-rubrik">
+    <div class="hero-photo__media" data-hero-media>
+      <Bild class="hero-photo__img" namn="hero" sizes="100vw" prioritet />
+    </div>
+    <div class="container hero-photo__wrap">
+      <div class="hero-photo__in">
+        <p class="eyebrow">{site.slogan}</p>
+        <h1 id="hero-rubrik">
+          {
+            rubrik.map((o, i) => (
+              <>
+                {i > 0 && ' '}
+                <span class="w">
+                  <span style={`--i:${i}`}>{o.t}</span>
+                </span>
+              </>
+            ))
+          }
+        </h1>
+        <p class="lead">
+          Foder och tillbehör, kloklippning, hundtrim och hundkurser.
+        </p>
+        <div class="btn-row">
+          <a class="btn" href="/produkter/" data-spor="hero-produkter">Se sortimentet</a>
+          <a class="btn btn--light" href={site.bokningUrl} rel="noopener" data-spor="hero-boka">Boka kloklippning</a>
+        </div>
+      </div>
+
+      <ul class="glass-cards" aria-label="Våra tjänster">
+        {
+          glasKort.map((k, i) => (
+            <li style={`--i:${i}`}>
+              <a class="glass-card" href={k.href}>
+                <span class="glass-card__icon"><Icon namn={k.ikon} storlek={22} /></span>
+                <span>
+                  <strong>{k.namn}</strong>
+                  <small>{k.text}</small>
+                </span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <div class="infostrip on-dark">
+    <div class="container">
+      <ul class="infostrip__list">
+        <li><Icon namn="pin" storlek={20} /> {adressRad}</li>
+        <li><Icon namn="clock" storlek={20} /> <OppetNu /></li>
+        <li><Icon namn="phone" storlek={20} /> <a href={site.telefon.href} data-spor="ring">{site.telefon.visning}</a></li>
+        <li><Icon namn="parking" storlek={20} /> Gratis parkering</li>
+      </ul>
+    </div>
+  </div>
+
+
+  <!-- ================= 1. SORTIMENT: hund eller katt ================= -->
+  <section class="section" aria-labelledby="sortiment-rubrik">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <div>
+          <p class="eyebrow">Sortiment</p>
+          <h2 id="sortiment-rubrik">Foder och tillbehör för hund och katt</h2>
+        </div>
+        <p>Från vardagsfoder till koppel, sängar och klösträd. Saknar du något beställer vi hem det om det går.</p>
+      </div>
+      <div class="photo-cards" data-reveal-stagger>
+        {
+          sortiment.map((s) => (
+            <a class="photo-card" href={`/produkter/#${s.id}`}>
+              <Bild namn={s.bild} alt={s.alt} sizes="(min-width: 48rem) 50vw, 100vw" />
+              <span class="photo-card__body">
+                <h3>{s.namn}</h3>
+                <span class="photo-card__text">{s.text}</span>
+                <span class="photo-card__more">Se sortimentet <Icon namn="arrow" storlek={18} /></span>
+              </span>
+            </a>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= 2. TJÄNSTER: välj och boka ================= -->
+  <section class="section section--tint" id="tjanster" aria-labelledby="tjanster-rubrik">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <div>
+          <p class="eyebrow">Tjänster</p>
+          <h2 id="tjanster-rubrik">Hjälp för hunden</h2>
+        </div>
+        <p>Boka kloklippning direkt online. De andra tjänsterna bokar du hos den som utför dem.</p>
+      </div>
+      <ol class="service-list" data-reveal-stagger>
+        {
+          tjanstRader.map((r) => (
+            <li class="service-row">
+              <span class="service-row__nr" aria-hidden="true">{r.nr}</span>
+              <div class="service-row__main">
+                <h3><a class="service-row__link" href={r.href}>{r.namn}</a></h3>
+                <p>{r.text}</p>
+              </div>
+              <span class="service-row__meta">{r.meta}</span>
+              <span class="service-row__go">
+                {r.boka ? (
+                  <a class="btn btn--sm" href={site.bokningUrl} rel="noopener" data-spor="lista-boka">Boka tid</a>
+                ) : (
+                  <Icon namn="arrow" storlek={22} />
+                )}
+              </span>
+            </li>
+          ))
+        }
+      </ol>
+      <p class="mt-5"><a class="text-link" href="/tjanster/"><span>Jämför tjänsterna och se priser</span><Icon namn="arrow" storlek={20} /></a></p>
+    </div>
+  </section>
+
+  <!-- ================= 3. VARFÖR: konkreta fakta ================= -->
+  <section class="section" aria-labelledby="varfor-rubrik">
+    <div class="container">
+      <div class="section-head" data-reveal>
+        <div>
+          <p class="eyebrow">Varför Fyra Tassar</p>
+          <h2 id="varfor-rubrik">En butik där någon kan svaren</h2>
+        </div>
+      </div>
+      <ul class="facts" data-reveal-stagger>
+        {fakta.map((f) => <li><strong>{f.stor}</strong><p>{f.text}</p></li>)}
+      </ul>
+    </div>
+  </section>
+
+  <!-- Omdömen: visas bara när riktiga omdömen finns i src/data/omdomen.ts -->
+  <Omdomen />
+
+  <!-- ================= 4. ERBJUDANDEN ================= -->
+  {
+    erbjudanden.length > 0 && (
+      <section class="section section--tint" aria-labelledby="erbj-rubrik">
+        <div class="container split split--even">
+          <div data-reveal>
+            <p class="eyebrow">Erbjudanden</p>
+            <h2 id="erbj-rubrik">Foderkampanjer just nu</h2>
+            <p class="lead">Kampanjpriser på torrfoder till hund och katt, i butiken.</p>
+            <p class="mt-5"><a class="btn" href="/erbjudanden/">Se alla erbjudanden</a></p>
+          </div>
+          <ul class="price-list" data-reveal-stagger>
+            {
+              erbjudanden.map((e) => (
+                <li>
+                  <span class="price-list__name">
+                    <strong>{e.namn}</strong>
+                    <small>{e.detalj}</small>
+                  </span>
+                  <span class="price-list__price">
+                    {e.pris} kr
+                    <span class="price-list__old">
+                      <span class="sr-only">Ordinarie pris </span>
+                      {e.franPris ? 'från ' : ''}
+                      {e.ordinarie} kr
+                    </span>
+                  </span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </section>
+    )
+  }
+
+  <!-- ================= 5. BESÖK OSS: öppettider, adress, frågor ================= -->
+  <section class="section" aria-labelledby="besok-rubrik">
+    <div class="container visit">
+      <div data-reveal>
+        <p class="eyebrow">Besök oss</p>
+        <h2 id="besok-rubrik">Välkommen in</h2>
+        <p class="lead">
+          {site.adress.gata}, {site.adress.postnummer} {site.adress.ort}. {site.adress.beskrivning}
+        </p>
+        <div class="hours-card">
+          <h3>Öppettider</h3>
+          <OppetNu />
+          <Oppettider />
+        </div>
+        <div class="btn-row mt-5">
+          <a class="btn" href={site.adress.kartaUrl} target="_blank" rel="noopener noreferrer" data-spor="karta"
+            ><Icon namn="pin" storlek={18} />Hitta hit<span class="sr-only"> (öppnas i ny flik)</span></a
+          >
+          <a class="btn btn--light" href={site.telefon.href} data-spor="ring"><Icon namn="phone" storlek={18} />Ring {site.telefon.visning}</a>
+        </div>
+      </div>
+      <div data-reveal>
+        <p class="eyebrow">Vanliga frågor</p>
+        <h2>Bra att veta</h2>
+        <Faq poster={startFaq} />
+        <p class="mt-5">
+          <a class="text-link" href="/fragor-och-svar/"><span>Fler frågor och svar</span><Icon namn="arrow" storlek={20} /></a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <SlutCta />
+  </div>
+</Bas>
+
+<script>
+  // Hero: bilden följer scroll och musen i en mjuk, fördröjd rörelse (av vid reducerad rörelse)
+  const media = document.querySelector<HTMLElement>('[data-hero-media]');
+  const hero = media?.closest<HTMLElement>('.hero-photo');
+  if (media && hero && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    const finPekare = window.matchMedia('(pointer: fine)').matches;
+    let mx = 0;
+    let my = 0; // målvärde från musen
+    let cx = 0;
+    let cy = 0; // nuvarande (utjämnat) värde
+    let rafId = 0;
+
+    const ram = () => {
+      cx += (mx - cx) * 0.07;
+      cy += (my - cy) * 0.07;
+      const hojd = hero.offsetHeight || 1;
+      const p = Math.min(Math.max(window.scrollY, 0), hojd) / hojd; // 0 → 1 när hjälten scrollas förbi
+      media.style.transform = `translate3d(${cx.toFixed(2)}px, ${(cy + p * hojd * 0.22).toFixed(2)}px, 0) scale(${(1 + p * 0.07).toFixed(4)})`;
+      rafId = Math.abs(mx - cx) > 0.05 || Math.abs(my - cy) > 0.05 ? requestAnimationFrame(ram) : 0;
+    };
+    const start = () => {
+      if (!rafId) rafId = requestAnimationFrame(ram);
+    };
+
+    window.addEventListener('scroll', start, { passive: true });
+    if (finPekare) {
+      hero.addEventListener('pointermove', (e) => {
+        const r = hero.getBoundingClientRect();
+        mx = ((e.clientX - r.left) / r.width - 0.5) * -26;
+        my = ((e.clientY - r.top) / r.height - 0.5) * -16;
+        start();
+      });
+      hero.addEventListener('pointerleave', () => {
+        mx = 0;
+        my = 0;
+        start();
+      });
+    }
+  }
+</script>

@@ -1,0 +1,138 @@
+---
+import Bas from '../layouts/Bas.astro';
+import Icon from '../components/Icon.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import Bild from '../components/Bild.astro';
+import { site } from '../data/site';
+
+const facebook = site.sociala.find((s) => s.namn === 'Facebook')!;
+const kursepost = 'AnetteZim@hotmail.com';
+
+// Rubriken delas upp i ord som glider in ett i taget, som på startsidan
+const rubrik = ['Hundkurser', 'för', 'dig', 'och', 'din', 'hund'];
+
+// Det kunden får – som glaskort i hjälten
+const kundFar = [
+  { ikon: 'cap', titel: 'En kurs', text: 'för dig och din hund' },
+  { ikon: 'facebook', titel: 'Enkel anmälan', text: 'i butiken eller via Facebook' },
+  { ikon: 'mail', titel: 'Svar på frågor', text: 'Anette besvarar frågor om kurserna' },
+  { ikon: 'parking', titel: 'Gratis parkering', text: 'direkt utanför butiken' },
+];
+
+const mer = [
+  { href: '/tjanster/kloklippning/', namn: 'Kloklippning', text: '160 kr' },
+  { href: '/tjanster/hundfriskvard/', namn: 'Hundfriskvård', text: 'Nillans hundhälsa' },
+  { href: '/produkter/', namn: 'Produkter', text: 'Foder och tillbehör' },
+];
+---
+
+<Bas
+  title="Hundkurser i Borlänge"
+  description="Hundkurser i Borlänge. Anmäl dig i butiken eller via Facebook, och ställ frågor om kurserna till Anette."
+>
+  <div class="page-dark">
+    <!-- Foto-hero i samma stil som startsidan: mörk, kontrastrik, utan interaktion -->
+    <section class="hero-photo hero-photo--kurs on-dark" aria-labelledby="kurs-rubrik">
+      <div class="hero-photo__media">
+        <Bild class="hero-photo__img" namn="kursledare" sizes="100vw" prioritet />
+      </div>
+      <div class="container hero-photo__wrap">
+        <div class="hero-photo__in">
+          <Breadcrumbs steg={[{ text: 'Kurser' }]} />
+          <p class="eyebrow">Kurser</p>
+          <h1 id="kurs-rubrik">
+            {
+              rubrik.map((ord, i) => (
+                <>
+                  {i > 0 && ' '}
+                  <span class="w">
+                    <span style={`--i:${i}`}>{ord}</span>
+                  </span>
+                </>
+              ))
+            }
+          </h1>
+          <p class="lead">Anmäl dig i butiken eller via Facebook.</p>
+          <div class="btn-row">
+            <a class="btn" href={facebook.url} target="_blank" rel="noopener noreferrer" data-spor="kurs-facebook"
+              ><Icon namn="facebook" storlek={18} />Anmäl via Facebook<span class="sr-only"> (öppnas i ny flik)</span></a
+            >
+            <a class="btn btn--light" href={site.telefon.href} data-spor="ring"><Icon namn="phone" storlek={18} />Ring butiken</a>
+          </div>
+        </div>
+
+        <ul class="glass-cards" aria-label="Det här får du som kund">
+          {
+            kundFar.map((k, i) => (
+              <li style={`--i:${i}`}>
+                <div class="glass-card glass-card--static">
+                  <span class="glass-card__icon"><Icon namn={k.ikon} storlek={22} /></span>
+                  <span>
+                    <strong>{k.titel}</strong>
+                    <small>{k.text}</small>
+                  </span>
+                </div>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    <!-- Anmälan: kompakt band under bilden -->
+    <section class="section--tight" aria-labelledby="anmalan-rubrik">
+      <div class="container signup">
+        <div data-reveal>
+          <p class="eyebrow">Anmälan</p>
+          <h2 id="anmalan-rubrik">Så anmäler du dig</h2>
+          <ol class="stage-steps stage-steps--rad">
+            <li>
+              <div>
+                <h3>Välj hur du anmäler dig</h3>
+                <p>Kom förbi butiken på {site.adress.gata} eller anmäl dig via Facebook.</p>
+              </div>
+            </li>
+            <li>
+              <div>
+                <h3>Fråga om du undrar något</h3>
+                <p>Anette svarar på frågor om kurserna.</p>
+              </div>
+            </li>
+          </ol>
+        </div>
+        <ul class="contact-list" data-reveal>
+          <li>
+            <span class="card__icon"><Icon namn="mail" storlek={20} /></span>
+            <span>
+              <a href={`mailto:${kursepost}`}>{kursepost}</a>
+              <small>Anette – frågor om kurserna</small>
+            </span>
+          </li>
+          <li>
+            <span class="card__icon"><Icon namn="phone" storlek={20} /></span>
+            <span>
+              <a href={site.telefon.href}>{site.telefon.visning}</a>
+              <small>Butiken</small>
+            </span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section--tight" aria-labelledby="mer-rubrik">
+      <div class="container">
+        <h2 id="mer-rubrik" class="sr-only">Mer för dig och hunden</h2>
+        <ul class="more-row">
+          {
+            mer.map((m) => (
+              <li>
+                <a href={m.href}>{m.namn}<Icon namn="arrow" storlek={18} /></a>
+                <small>{m.text}</small>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+  </div>
+</Bas>

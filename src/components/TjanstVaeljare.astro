@@ -1,0 +1,195 @@
+---
+/**
+ * Interaktiv tjänsteväljare (flikar). Kunden väljer en tjänst och ser direkt vad hen får,
+ * vad det kostar, vem som utför den och hur man bokar. Bilden byts med mjuk rörelse.
+ * Utan JavaScript visas alla tjänster under varandra.
+ */
+import Icon from './Icon.astro';
+import Bild from './Bild.astro';
+import type { BildNamn } from '../data/bilder';
+import type { Lank } from '../data/tjanster';
+
+export interface ValjbarTjanst {
+  id: string;
+  namn: string;
+  kundnytta: string;
+  kundFar: string[];
+  pris: { rubrik: string; text: string };
+  tid?: string;
+  utfors: string;
+  steg: { titel: string; text: string }[];
+  bild: BildNamn;
+  cta: Lank;
+  merHref: string;
+  meta: string;
+}
+
+interface Props {
+  tjanster: ValjbarTjanst[];
+}
+const { tjanster } = Astro.props;
+---
+
+<div class="selector" data-selector>
+  <div class="selector__tabs" role="tablist" aria-label="Välj tjänst" aria-orientation="vertical" data-tabs hidden>
+    {
+      tjanster.map((t, i) => (
+        <button
+          class="tab"
+          type="button"
+          role="tab"
+          id={`tab-${t.id}`}
+          aria-selected={i === 0 ? 'true' : 'false'}
+          aria-controls={`panel-${t.id}`}
+          tabindex={i === 0 ? 0 : -1}
+          data-tab={t.id}
+        >
+          <span class="tab__nr" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+          <span class="tab__text">
+            <span class="tab__namn">{t.namn}</span>
+            <span class="tab__meta">{t.meta}</span>
+          </span>
+          <Icon namn="arrow" storlek={20} class="tab__pil" />
+        </button>
+      ))
+    }
+    <span class="selector__indicator" aria-hidden="true" data-indicator></span>
+  </div>
+
+  <div class="selector__panels">
+    {
+      tjanster.map((t, i) => (
+        <div
+          class="svc-panel on-dark"
+          role="tabpanel"
+          id={`panel-${t.id}`}
+          aria-labelledby={`tab-${t.id}`}
+          tabindex="0"
+          data-panel={t.id}
+        >
+          <div class="svc-panel__media"><Bild namn={t.bild} alt="" sizes="(min-width: 64rem) 60vw, 100vw" /></div>
+          <div class="svc-panel__in">
+            <p class="eyebrow">Tjänst {String(i + 1).padStart(2, '0')}</p>
+            <h3>{t.namn}</h3>
+            <p class="svc-panel__lead">{t.kundnytta}</p>
+
+            <h4 class="svc-panel__rubrik">Det här får du som kund</h4>
+            <ul class="get-list">
+              {
+                t.kundFar.map((f, j) => (
+                  <li style={`--i:${j}`}>
+                    <Icon namn="check" storlek={20} />
+                    <span>{f}</span>
+                  </li>
+                ))
+              }
+            </ul>
+
+            <dl class="svc-facts">
+              <div>
+                <dt>Pris</dt>
+                <dd>{t.pris.rubrik}</dd>
+              </div>
+              <div>
+                <dt>Utförs av</dt>
+                <dd>{t.utfors}</dd>
+              </div>
+              {
+                t.tid && (
+                  <div>
+                    <dt>Tid</dt>
+                    <dd>{t.tid}</dd>
+                  </div>
+                )
+              }
+            </dl>
+
+            <ol class="mini-steps" aria-label="Så går det till">
+              {t.steg.map((s) => <li>{s.titel}</li>)}
+            </ol>
+
+            <div class="btn-row">
+              <a
+                class="btn"
+                href={t.cta.href}
+                {...(t.cta.extern ? { rel: 'noopener', target: '_blank' } : {})}
+                data-spor="valjare-cta"
+              >
+                {t.cta.text}
+                {t.cta.extern && <span class="sr-only"> (öppnas i ny flik)</span>}
+              </a>
+              <a class="btn btn--light" href={t.merHref}>Läs mer</a>
+            </div>
+          </div>
+        </div>
+      ))
+    }
+  </div>
+</div>
+
+<script>
+  const rot = document.querySelector<HTMLElement>('[data-selector]');
+  const flikar = rot?.querySelector<HTMLElement>('[data-tabs]');
+  if (rot && flikar) {
+    const knappar = [...flikar.querySelectorAll<HTMLButtonElement>('[data-tab]')];
+    const paneler = [...rot.querySelectorAll<HTMLElement>('[data-panel]')];
+    const indikator = rot.querySelector<HTMLElement>('[data-indicator]');
+    flikar.hidden = false;
+    rot.classList.add('selector--aktiv');
+
+    const flytta = (knapp: HTMLElement) => {
+      if (!indikator) return;
+      indikator.style.height = `${knapp.offsetHeight}px`;
+      indikator.style.transform = `translateY(${knapp.offsetTop}px)`;
+    };
+
+    const valj = (id: string, fokus = false) => {
+      for (const k of knappar) {
+        const pa = k.dataset.tab === id;
+        k.setAttribute('aria-selected', String(pa));
+        k.tabIndex = pa ? 0 : -1;
+        if (pa) {
+          flytta(k);
+          if (fokus) k.focus();
+        }
+      }
+      for (const p of paneler) p.hidden = p.dataset.panel !== id;
+    };
+
+    knappar.forEach((k, i) => {
+      k.addEventListener('click', () => valj(k.dataset.tab!));
+      k.addEventListener('keydown', (e) => {
+        const framåt = e.key === 'ArrowDown' || e.key === 'ArrowRight';
+        const bakåt = e.key === 'ArrowUp' || e.key === 'ArrowLeft';
+        let nasta = -1;
+        if (framåt) nasta = (i + 1) % knappar.length;
+        else if (bakåt) nasta = (i - 1 + knappar.length) % knappar.length;
+        else if (e.key === 'Home') nasta = 0;
+        else if (e.key === 'End') nasta = knappar.length - 1;
+        if (nasta >= 0) {
+          e.preventDefault();
+          valj(knappar[nasta].dataset.tab!, true);
+        }
+      });
+    });
+
+    // Djuplänk, t.ex. /tjanster/#hundtrim
+    const fran = location.hash.replace('#', '');
+    valj(knappar.some((k) => k.dataset.tab === fran) ? fran : knappar[0].dataset.tab!);
+    window.addEventListener('resize', () => {
+      const aktiv = knappar.find((k) => k.getAttribute('aria-selected') === 'true');
+      if (aktiv) flytta(aktiv);
+    });
+
+    // Ljuspunkt som följer musen över panelerna
+    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && window.matchMedia('(pointer: fine)').matches) {
+      for (const p of paneler) {
+        p.addEventListener('pointermove', (e) => {
+          const r = p.getBoundingClientRect();
+          p.style.setProperty('--mx', `${e.clientX - r.left}px`);
+          p.style.setProperty('--my', `${e.clientY - r.top}px`);
+        });
+      }
+    }
+  }
+</script>

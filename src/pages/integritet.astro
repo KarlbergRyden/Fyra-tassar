@@ -1,0 +1,95 @@
+---
+import Bas from '../layouts/Bas.astro';
+import PageBanner from '../components/PageBanner.astro';
+import { site, adressRad } from '../data/site';
+
+const harFormularTjanst = Boolean(site.formularEndpoint);
+---
+
+<Bas
+  title="Integritetspolicy och cookies"
+  description="Så behandlar Fyra Tassar i Borlänge dina personuppgifter. Webbplatsen använder inga cookies och ingen spårning."
+>
+  <div class="page-dark">
+  <PageBanner
+    titel="Integritetspolicy och cookies"
+    ingress="Här beskriver vi vilka personuppgifter vi hanterar via den här webbplatsen, varför och hur länge. Senast uppdaterad: 12 oktober 2026."
+    steg={[{ text: 'Integritet och cookies' }]}
+  />
+  <div class="container container--narrow">
+    <div class="prose" style="padding-bottom: var(--section)">
+      <h2>Vem är ansvarig?</h2>
+      <p>
+        {site.juridisktNamn}{site.organisationsnummer ? `, organisationsnummer ${site.organisationsnummer}` : ''},
+        {adressRad}, är personuppgiftsansvarig. Du når oss på <a href={`mailto:${site.epost}`}>{site.epost}</a> eller
+        <a href={site.telefon.href}>{site.telefon.visning}</a>.
+      </p>
+
+      <h2>Vilka uppgifter samlar vi in?</h2>
+      <p>Den enda personuppgiftsinsamling som sker via webbplatsen är kontaktformuläret. Där ber vi om:</p>
+      <ul>
+        <li>ditt namn,</li>
+        <li>din e-postadress,</li>
+        <li>ditt telefonnummer (valfritt) och</li>
+        <li>ditt meddelande, där du själv bestämmer vad du skriver.</li>
+      </ul>
+      <p>Skriv gärna inte mer personlig information än vad som behövs för att vi ska kunna svara.</p>
+
+      <h2>Varför behandlar vi uppgifterna?</h2>
+      <p>
+        Vi använder uppgifterna för att besvara din fråga och följa upp ärendet. Den rättsliga grunden är vårt
+        berättigade intresse av att kunna svara på förfrågningar (artikel 6.1 f i dataskyddsförordningen), eller att vidta
+        åtgärder på din begäran innan ett eventuellt avtal (artikel 6.1 b).
+      </p>
+
+      <h2>Vem får del av uppgifterna?</h2>
+      {
+        harFormularTjanst ? (
+          <p>
+            Meddelandet skickas via en formulärtjänst till vår e-post. Tjänstens leverantör behandlar uppgifterna för vår
+            räkning. Vi lämnar inte uppgifterna vidare i andra syften.
+          </p>
+        ) : (
+          <p>
+            Formuläret skickar ingenting automatiskt. När du skickar öppnas ditt eget e-postprogram med meddelandet
+            ifyllt, och det är först när du trycker på skicka där som det når oss. Då hanteras meddelandet av din
+            e-postleverantör och vår e-postleverantör. Vi lämnar inte uppgifterna vidare i andra syften.
+          </p>
+        )
+      }
+
+      <h2>Hur länge sparar vi uppgifterna?</h2>
+      <p>
+        Vi sparar meddelandet så länge det behövs för att besvara och följa upp din fråga, och raderar det därefter.
+      </p>
+
+      <h2>Cookies och spårning</h2>
+      <p>
+        Den här webbplatsen använder <strong>inga cookies</strong> och ingen webbanalys eller annan spårning. Därför
+        visar vi ingen cookiebanner. Typsnitten ligger på vår egen server, så inga uppgifter om ditt besök skickas till
+        typsnittsleverantörer.
+      </p>
+
+      <h2>Länkar till andra tjänster</h2>
+      <p>
+        Webbplatsen länkar till Bokadirekt (bokning av kloklippning), Facebook, Instagram, Google Maps och Nillans
+        hundhälsa. När du följer en länk gäller den tjänstens egna villkor och integritetspolicy. Vi bäddar inte in
+        innehåll från dem på våra sidor.
+      </p>
+
+      <h2>Dina rättigheter</h2>
+      <p>Du har rätt att:</p>
+      <ul>
+        <li>få veta vilka uppgifter vi har om dig och få en kopia,</li>
+        <li>få felaktiga uppgifter rättade,</li>
+        <li>få uppgifter raderade eller begränsade,</li>
+        <li>invända mot behandlingen.</li>
+      </ul>
+      <p>
+        Hör av dig till <a href={`mailto:${site.epost}`}>{site.epost}</a> så hjälper vi dig. Du har också rätt att
+        lämna klagomål till Integritetsskyddsmyndigheten (IMY), <a href="https://www.imy.se" rel="noopener">imy.se</a>.
+      </p>
+    </div>
+  </div>
+  </div>
+</Bas>

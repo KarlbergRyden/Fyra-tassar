@@ -1,0 +1,124 @@
+---
+import Bas from '../layouts/Bas.astro';
+import Icon from '../components/Icon.astro';
+import PageBanner from '../components/PageBanner.astro';
+import KontaktForm from '../components/KontaktForm.astro';
+import Oppettider from '../components/Oppettider.astro';
+import OppetNu from '../components/OppetNu.astro';
+import { site } from '../data/site';
+---
+
+<Bas
+  title="Kontakt och öppettider"
+  description="Kontakta Fyra Tassar i Borlänge: Hantverkargatan 5, telefon 0243-86 860, info@fyratassar.nu. Se öppettider, hitta hit och skicka ett meddelande."
+>
+  <div class="page-dark">
+    <PageBanner
+      titel="Kontakt"
+      ingress="Ring, mejla eller kom förbi. Du kan också skicka ett meddelande så svarar vi på e-post eller telefon."
+      steg={[{ text: 'Kontakt' }]}
+      etikett="Kontakt"
+    />
+
+    <!-- Tre snabba vägar: ring, mejla, hitta hit -->
+    <section class="section--tight" aria-label="Snabbkontakt">
+      <div class="container">
+        <ul class="quick" data-reveal-stagger>
+          <li class="quick__kort" data-spot>
+            <span class="quick__ikon"><Icon namn="phone" storlek={24} /></span>
+            <span class="quick__etikett">Ring oss</span>
+            <a class="quick__varde" href={site.telefon.href} data-spor="ring">{site.telefon.visning}</a>
+            <button class="quick__kopiera" type="button" data-kopiera={site.telefon.visning} hidden>Kopiera</button>
+          </li>
+          <li class="quick__kort" data-spot>
+            <span class="quick__ikon"><Icon namn="mail" storlek={24} /></span>
+            <span class="quick__etikett">Mejla oss</span>
+            <a class="quick__varde" href={`mailto:${site.epost}`} data-spor="epost">{site.epost}</a>
+            <button class="quick__kopiera" type="button" data-kopiera={site.epost} hidden>Kopiera</button>
+          </li>
+          <li class="quick__kort" data-spot>
+            <span class="quick__ikon"><Icon namn="pin" storlek={24} /></span>
+            <span class="quick__etikett">Besök butiken</span>
+            <a class="quick__varde" href={site.adress.kartaUrl} target="_blank" rel="noopener noreferrer" data-spor="karta"
+              >{site.adress.gata}<span class="sr-only"> (öppnas i ny flik)</span></a
+            >
+            <span class="quick__text">{site.adress.postnummer} {site.adress.ort}</span>
+          </li>
+        </ul>
+        <p class="sr-only" role="status" data-kopierat></p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="split">
+          <section class="form-card" aria-labelledby="formular-rubrik" data-reveal>
+            <p class="eyebrow">Meddelande</p>
+            <h2 id="formular-rubrik">Skicka ett meddelande</h2>
+            <p class="text-soft">
+              Berätta vad du undrar över. Vi läser meddelandet och svarar dig via e-post eller telefon.
+            </p>
+            <KontaktForm />
+          </section>
+
+          <div class="stack aside-sticky">
+            <section class="hours-card" id="oppettider" aria-labelledby="oppettider-rubrik" data-reveal>
+              <h2 id="oppettider-rubrik">Öppettider</h2>
+              <OppetNu />
+              <Oppettider />
+            </section>
+
+            <section class="info-card" aria-labelledby="hitta-rubrik" data-reveal>
+              <h2 id="hitta-rubrik">Hitta hit</h2>
+              <p class="mb-0">
+                <strong>{site.namn}</strong><br />
+                {site.adress.gata}, {site.adress.postnummer} {site.adress.ort}
+              </p>
+              <p class="text-soft mb-0">{site.adress.beskrivning}</p>
+              <div class="btn-row">
+                <a class="btn" href={site.adress.kartaUrl} target="_blank" rel="noopener noreferrer" data-spor="karta"
+                  ><Icon namn="pin" storlek={18} />Öppna i kartor<span class="sr-only"> (öppnas i ny flik)</span></a
+                >
+              </div>
+              <ul class="socials-row" aria-label="Sociala medier">
+                {
+                  site.sociala.map((s) => (
+                    <li>
+                      <a href={s.url} target="_blank" rel="noopener noreferrer">
+                        <Icon namn={s.ikon} storlek={20} />{s.namn}<span class="sr-only"> (öppnas i ny flik)</span>
+                      </a>
+                    </li>
+                  ))
+                }
+              </ul>
+            </section>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</Bas>
+
+<script>
+  // Kopiera telefon/e-post med ett klick (knapparna visas bara om webbläsaren stöder det)
+  const status = document.querySelector<HTMLElement>('[data-kopierat]');
+  if (navigator.clipboard) {
+    document.querySelectorAll<HTMLButtonElement>('[data-kopiera]').forEach((knapp) => {
+      knapp.hidden = false;
+      knapp.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(knapp.dataset.kopiera ?? '');
+          knapp.dataset.klar = 'true';
+          knapp.textContent = 'Kopierat';
+          if (status) status.textContent = `Kopierat: ${knapp.dataset.kopiera}`;
+          setTimeout(() => {
+            knapp.dataset.klar = 'false';
+            knapp.textContent = 'Kopiera';
+          }, 2200);
+        } catch {
+          knapp.hidden = true;
+        }
+      });
+    });
+  }
+</script>

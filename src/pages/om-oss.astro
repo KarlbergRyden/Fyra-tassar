@@ -1,0 +1,126 @@
+---
+import Bas from '../layouts/Bas.astro';
+import Icon from '../components/Icon.astro';
+import Breadcrumbs from '../components/Breadcrumbs.astro';
+import Bild from '../components/Bild.astro';
+import { team } from '../data/team';
+import { site } from '../data/site';
+
+const initialer = (namn: string) =>
+  namn
+    .split(' ')
+    .map((d) => d[0])
+    .join('')
+    .slice(0, 2);
+
+// Rubriken delas upp i ord som glider in ett i taget, som på startsidan
+const rubrik = 'Den personliga butiken i Borlänge'.split(' ');
+
+const siffror = [
+  { stor: '20 år', text: 'i djurbutik' },
+  { stor: String(team.length), text: 'personer i butiken' },
+  { stor: 'Gratis', text: 'parkering utanför' },
+];
+
+const fakta = [
+  { stor: '20 år i djurbutik', text: 'Butiksägaren Lotta har arbetat i djurbutik i 20 år och har utbildning i foderlära.' },
+  { stor: 'Hos tillverkarna', text: 'Personalen har besökt Fourfriends i Prag och Profines tillverkning.' },
+  { stor: 'Egna djur', text: 'Personalen har egna hundar och erfarenhet av katter. Lotta tränar och tävlar i bruks.' },
+];
+---
+
+<Bas
+  title="Om oss – den personliga butiken i Borlänge"
+  description="Möt teamet bakom Fyra Tassar i Borlänge: butiksägaren Lotta Andersson med 20 års erfarenhet av djurbutik, och personalen som hjälper dig och ditt djur."
+>
+  <div class="page-dark">
+    <!-- Hero: text till vänster, teamet svävande i rosa sken till höger -->
+    <section class="about-hero on-dark" aria-labelledby="om-rubrik">
+      <div class="container about-hero__grid">
+        <div class="about-hero__text">
+          <Breadcrumbs steg={[{ text: 'Om oss' }]} />
+          <p class="eyebrow">Om oss</p>
+          <h1 id="om-rubrik">
+            {
+              rubrik.map((ord, i) => (
+                <>
+                  {i > 0 && ' '}
+                  <span class="w">
+                    <span style={`--i:${i}`}>{ord}</span>
+                  </span>
+                </>
+              ))
+            }
+          </h1>
+          <p class="lead">
+            Fyra Tassar är en djurbutik med foder och tillbehör till hund och katt. Här möter du personal som själva har
+            djur och som kan svara på dina frågor.
+          </p>
+          <ul class="about-stats" aria-label="Fyra Tassar i siffror">
+            {siffror.map((s) => <li><strong>{s.stor}</strong><span>{s.text}</span></li>)}
+          </ul>
+          <div class="btn-row">
+            <a class="btn" href="/kontakt/">Hitta hit</a>
+            <a class="btn btn--light" href={site.telefon.href} data-spor="ring"><Icon namn="phone" storlek={18} />Ring {site.telefon.visning}</a>
+          </div>
+        </div>
+        <div class="about-hero__stage">
+          <Bild namn="team" sizes="(min-width: 64rem) 46vw, 100vw" prioritet />
+        </div>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="team-rubrik">
+      <div class="container">
+        <div class="section-head" data-reveal>
+          <div>
+            <p class="eyebrow">Teamet</p>
+            <h2 id="team-rubrik">Personerna i butiken</h2>
+          </div>
+          <p>Möt dem som hjälper dig och ditt djur när du kommer in.</p>
+        </div>
+        <div class="team-grid" data-reveal-stagger>
+          {
+            team.map((p) => (
+              <article class="person-card" data-spot>
+                <span class="person-card__avatar" aria-hidden="true">{initialer(p.namn)}</span>
+                <div>
+                  <h3>{p.namn}</h3>
+                  <p class="person-card__roll">{p.roll}</p>
+                  <p class="person-card__text">{p.text}</p>
+                </div>
+              </article>
+            ))
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--tint" aria-labelledby="tillit-rubrik">
+      <div class="container">
+        <div class="section-head" data-reveal>
+          <div>
+            <p class="eyebrow">Därför kan du lita på oss</p>
+            <h2 id="tillit-rubrik">Vi vet vad vi säljer</h2>
+          </div>
+        </div>
+        <ul class="facts" data-reveal-stagger>
+          {fakta.map((f) => <li><strong>{f.stor}</strong><p>{f.text}</p></li>)}
+        </ul>
+      </div>
+    </section>
+
+    <section class="section--tight cta-slim" aria-labelledby="cta-rubrik">
+      <div class="container cta-slim__in" data-reveal>
+        <div>
+          <h2 id="cta-rubrik">Kom förbi och hälsa på</h2>
+          <p>Vi svarar gärna på frågor om foder, tillbehör och våra tjänster.</p>
+        </div>
+        <div class="btn-row">
+          <a class="btn" href="/kontakt/">Hitta hit</a>
+          <a class="btn btn--light" href="/produkter/">Se sortimentet</a>
+        </div>
+      </div>
+    </section>
+  </div>
+</Bas>

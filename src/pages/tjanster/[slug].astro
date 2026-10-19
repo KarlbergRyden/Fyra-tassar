@@ -1,0 +1,168 @@
+---
+import Bas from '../../layouts/Bas.astro';
+import Icon from '../../components/Icon.astro';
+import PageBanner from '../../components/PageBanner.astro';
+import PrisBlock from '../../components/PrisBlock.astro';
+import Steg from '../../components/Steg.astro';
+import Faq from '../../components/Faq.astro';
+import SlutCta from '../../components/SlutCta.astro';
+import { tjanster, hittaTjanst, type Tjanst } from '../../data/tjanster';
+import { site } from '../../data/site';
+
+export function getStaticPaths() {
+  return tjanster.map((t) => ({ params: { slug: t.slug }, props: { tjanst: t } }));
+}
+
+interface Props {
+  tjanst: Tjanst;
+}
+const { tjanst: t } = Astro.props;
+const relaterade = t.relaterade.map((s) => hittaTjanst(s)).filter((x): x is Tjanst => Boolean(x));
+const cta = t.cta;
+const ctaAttr = cta.extern ? { rel: 'noopener', target: '_blank' } : {};
+const altAttr = t.altKontakt.extern ? { rel: 'noopener', target: '_blank' } : {};
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: t.namn,
+    description: t.seo.description,
+    areaServed: site.adress.ort,
+    provider: { '@id': `${site.url}/#butik` },
+    ...(t.pris.belopp
+      ? {
+          offers: {
+            '@type': 'Offer',
+            price: t.pris.belopp,
+            priceCurrency: 'SEK',
+            url: new URL(Astro.url.pathname, site.url).href,
+          },
+        }
+      : {}),
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: t.faq.map((f) => ({
+      '@type': 'Question',
+      name: f.fraga,
+      acceptedAnswer: { '@type': 'Answer', text: f.svar },
+    })),
+  },
+];
+---
+
+<Bas title={t.seo.title} description={t.seo.description} jsonLd={schema}>
+  <div class="page-dark">
+    <PageBanner
+      titel={t.namn}
+      ingress={t.kundnytta}
+      steg={[{ text: 'Tjänster', href: '/tjanster/' }, { text: t.namn }]}
+      foto={t.bild}
+      ikon={t.ikon}
+    >
+      <a class="btn" href={cta.href} {...ctaAttr} data-spor="tjanst-hero-cta">
+        {cta.text}
+        {cta.extern && <span class="sr-only"> (öppnas i ny flik)</span>}
+      </a>
+      <a class="btn btn--light" href={t.altKontakt.href} {...altAttr}>
+        {t.altKontakt.text}
+        {t.altKontakt.extern && <span class="sr-only"> (öppnas i ny flik)</span>}
+      </a>
+    </PageBanner>
+
+    <section class="section">
+      <div class="container">
+        <div class="split">
+          <div class="stack">
+            <section aria-labelledby="far-rubrik" data-reveal>
+              <p class="eyebrow">Din tjänst</p>
+              <h2 id="far-rubrik">Det här får du som kund</h2>
+              <ul class="get-list get-list--stor">
+                {
+                  t.kundFar.map((f, i) => (
+                    <li style={`--i:${i}`}>
+                      <Icon namn="check" storlek={22} />
+                      <span>{f}</span>
+                    </li>
+                  ))
+                }
+              </ul>
+            </section>
+
+            <section aria-labelledby="passar-rubrik" data-reveal>
+              <h2 id="passar-rubrik">Vem passar det för?</h2>
+              <ul class="checklist">
+                {t.passarFor.map((p) => <li><Icon namn="check" storlek={22} /><span>{p}</span></li>)}
+              </ul>
+              {
+                t.begransningar && t.begransningar.length > 0 && (
+                  <ul class="checklist checklist--no mt-5">
+                    {t.begransningar.map((p) => <li><Icon namn="x" storlek={22} /><span>{p}</span></li>)}
+                  </ul>
+                )
+              }
+            </section>
+
+            <section aria-labelledby="steg-rubrik" data-reveal>
+              <h2 id="steg-rubrik">Så går det till</h2>
+              <Steg steg={t.steg} rad={false} />
+            </section>
+
+            {
+              t.forberedelse && t.forberedelse.length > 0 && (
+                <section aria-labelledby="forb-rubrik" data-reveal>
+                  <h2 id="forb-rubrik">Att förbereda</h2>
+                  <ul class="checklist">
+                    {t.forberedelse.map((p) => <li><Icon namn="check" storlek={22} /><span>{p}</span></li>)}
+                  </ul>
+                </section>
+              )
+            }
+
+            <section aria-labelledby="utforare-rubrik" data-reveal>
+              <h2 id="utforare-rubrik">{t.utforare.rubrik}</h2>
+              <p>{t.utforare.text}</p>
+            </section>
+          </div>
+
+          <div class="aside-sticky">
+            <PrisBlock rubrik={t.pris.rubrik} text={t.pris.text} tid={t.tidsatgang} villkor={t.villkor} cta={cta} />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--tint" aria-labelledby="faq-rubrik">
+      <div class="container container--narrow">
+        <h2 id="faq-rubrik" data-reveal>Vanliga frågor om {t.namn.toLowerCase()}</h2>
+        <Faq poster={t.faq} />
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="rel-rubrik">
+      <div class="container">
+        <h2 id="rel-rubrik" data-reveal>Andra tjänster</h2>
+        <div class="grid grid--3" data-reveal-stagger>
+          {
+            relaterade.map((r) => (
+              <article class="card card--link">
+                <span class="card__icon"><Icon namn={r.ikon} /></span>
+                <h3><a class="card__link" href={`/tjanster/${r.slug}/`}>{r.namn}</a></h3>
+                <p>{r.sammanfattning}</p>
+              </article>
+            ))
+          }
+          <article class="card card--link">
+            <span class="card__icon"><Icon namn="box" /></span>
+            <h3><a class="card__link" href="/produkter/">Produkter</a></h3>
+            <p>Foder och tillbehör till hund och katt.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <SlutCta />
+</Bas>

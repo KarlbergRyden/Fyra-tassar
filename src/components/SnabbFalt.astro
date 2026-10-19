@@ -1,0 +1,17 @@
+---
+/** Fast rad längst ned på mobil: de tre vanligaste handlingarna är alltid inom räckhåll. */
+import Icon from './Icon.astro';
+import { site } from '../data/site';
+---
+
+<nav class="snabbfalt" aria-label="Snabbval">
+  <a class="snabbfalt__lank" href={site.telefon.href} data-spor="snabb-ring">
+    <Icon namn="phone" storlek={20} /><span>Ring</span>
+  </a>
+  <a class="snabbfalt__lank snabbfalt__lank--primar" href={site.bokningUrl} rel="noopener" data-spor="snabb-boka">
+    <Icon namn="scissors" storlek={20} /><span>Boka klippning</span>
+  </a>
+  <a class="snabbfalt__lank" href="/kontakt/#oppettider" data-spor="snabb-hitta">
+    <Icon namn="pin" storlek={20} /><span>Hitta hit</span>
+  </a>
+</nav>

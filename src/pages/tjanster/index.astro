@@ -1,0 +1,153 @@
+---
+import Bas from '../../layouts/Bas.astro';
+import Icon from '../../components/Icon.astro';
+import PageBanner from '../../components/PageBanner.astro';
+import TjanstVaeljare, { type ValjbarTjanst } from '../../components/TjanstVaeljare.astro';
+import SlutCta from '../../components/SlutCta.astro';
+import { tjanster, hittaTjanst } from '../../data/tjanster';
+import { site } from '../../data/site';
+
+const kloklippning = hittaTjanst('kloklippning')!;
+const facebook = site.sociala.find((s) => s.namn === 'Facebook')!;
+
+const meta: Record<string, string> = {
+  kloklippning: '160 kr · boka online',
+  hundtrim: 'Boka via sms · även katt',
+  hundfriskvard: 'Massage · laser · elektroterapi',
+};
+const utfors: Record<string, string> = {
+  kloklippning: 'Butikens egna kloklippare',
+  hundtrim: 'Anna-Lena’s hundtrim',
+  hundfriskvard: 'Nillans hundhälsa',
+};
+
+const valjbara: ValjbarTjanst[] = [
+  ...tjanster.map((t) => ({
+    id: t.slug,
+    namn: t.namn,
+    kundnytta: t.kundnytta,
+    kundFar: t.kundFar,
+    pris: t.pris,
+    tid: t.slug === 'kloklippning' ? 'Vanligtvis tisdagar ca 15–19' : undefined,
+    utfors: utfors[t.slug] ?? '',
+    steg: t.steg,
+    bild: t.bild,
+    cta: t.cta,
+    merHref: `/tjanster/${t.slug}/`,
+    meta: meta[t.slug] ?? '',
+  })),
+  {
+    id: 'hundkurser',
+    namn: 'Hundkurser',
+    kundnytta: 'Kurser för dig och din hund, med anmälan direkt i butiken.',
+    kundFar: [
+      'En kurs för dig och din hund',
+      'Anmälan i butiken eller via Facebook',
+      'Frågor om kurserna besvaras av Anette',
+      'Gratis parkering direkt utanför butiken',
+    ],
+    pris: { rubrik: 'Fråga Anette', text: '' },
+    utfors: 'Butiken',
+    steg: [{ titel: 'Välj hur du anmäler dig', text: '' }, { titel: 'Fråga om du undrar något', text: '' }, { titel: 'Kom till kursen', text: '' }],
+    bild: 'bannerHund',
+    cta: { text: 'Anmäl via Facebook', href: facebook.url, extern: true },
+    merHref: '/kurser/',
+    meta: 'Anmälan i butiken',
+  },
+];
+
+const rader = [
+  { namn: 'Kloklippning', href: '/tjanster/kloklippning/', pris: '160 kr', bokning: 'Online via Bokadirekt, betalning med Klarna', av: 'Butikens kloklippare' },
+  { namn: 'Hundtrim', href: '/tjanster/hundtrim/', pris: 'Lämnas vid bokning', bokning: 'Sms till 072-308 05 00 (skriv att det gäller Borlänge)', av: 'Anna-Lena’s hundtrim' },
+  { namn: 'Hundfriskvård', href: '/tjanster/hundfriskvard/', pris: 'Lämnas av utföraren', bokning: 'Ring 073-698 10 09', av: 'Nillans hundhälsa' },
+  { namn: 'Hundkurser', href: '/kurser/', pris: 'Fråga Anette', bokning: 'Anmälan i butiken eller via Facebook', av: 'Se kurssidan' },
+];
+
+const trygghet = [
+  { ikon: 'tag', text: 'Tydligt pris, i förväg' },
+  { ikon: 'clock', text: 'Boka online eller direkt' },
+  { ikon: 'shield', text: 'Erfarna utförare' },
+  { ikon: 'parking', text: 'Gratis parkering utanför' },
+];
+---
+
+<Bas
+  title="Tjänster för hund i Borlänge"
+  description="Kloklippning, hundtrim, hundfriskvård och hundkurser i Borlänge. Se vad du får som kund, vad det kostar, vem som utför tjänsten och hur du bokar."
+>
+  <div class="page-dark">
+    <PageBanner
+      titel="Tjänster för dig och din hund"
+      ingress="Välj en tjänst och se direkt vad du får, vad det kostar och hur du bokar."
+      steg={[{ text: 'Tjänster' }]}
+      etikett="Tjänster"
+    >
+      <a class="btn" href={site.bokningUrl} rel="noopener" data-spor="tjanster-boka">Boka kloklippning</a>
+      <a class="btn btn--light" href="#jamfor">Jämför tjänsterna</a>
+    </PageBanner>
+
+    <div class="infostrip on-dark">
+      <div class="container">
+        <ul class="infostrip__list">
+          {trygghet.map((t) => <li><Icon namn={t.ikon} storlek={20} />{t.text}</li>)}
+        </ul>
+      </div>
+    </div>
+
+    <section class="section" aria-labelledby="valj-rubrik">
+      <div class="container">
+        <div class="section-head" data-reveal>
+          <div>
+            <p class="eyebrow">Välj tjänst</p>
+            <h2 id="valj-rubrik">Vad vill du ha hjälp med?</h2>
+          </div>
+          <p>Klicka dig fram. Du ser vad du får, vad det kostar, vem som utför tjänsten och hur du bokar.</p>
+        </div>
+        <TjanstVaeljare tjanster={valjbara} />
+      </div>
+    </section>
+
+    <section class="section section--tint" id="jamfor" aria-labelledby="jamfor-rubrik">
+      <div class="container">
+        <div class="section-head" data-reveal>
+          <div>
+            <p class="eyebrow">Överblick</p>
+            <h2 id="jamfor-rubrik">Tjänsterna sida vid sida</h2>
+          </div>
+          <p>Pris, hur du bokar och vem som utför – på ett ställe.</p>
+        </div>
+        <div class="table-wrap" tabindex="0" role="region" aria-label="Jämförelse av tjänster, kan scrollas i sidled" data-reveal>
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Tjänst</th>
+                <th scope="col">Pris</th>
+                <th scope="col">Så bokar du</th>
+                <th scope="col">Utförs av</th>
+              </tr>
+            </thead>
+            <tbody>
+              {
+                rader.map((r) => (
+                  <tr>
+                    <th scope="row"><a href={r.href}>{r.namn}</a></th>
+                    <td>{r.pris}</td>
+                    <td>{r.bokning}</td>
+                    <td>{r.av}</td>
+                  </tr>
+                ))
+              }
+            </tbody>
+          </table>
+        </div>
+        <div class="btn-row mt-6">
+          <a class="btn" href={kloklippning.cta.href} rel="noopener" data-spor="tjanster-boka">Boka kloklippning</a>
+          <a class="btn btn--light" href="/priser/">Se alla priser</a>
+          <a class="btn btn--light" href="/kontakt/">Fråga oss</a>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <SlutCta />
+</Bas>

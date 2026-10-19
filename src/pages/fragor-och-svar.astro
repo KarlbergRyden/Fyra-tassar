@@ -1,0 +1,41 @@
+---
+import Bas from '../layouts/Bas.astro';
+import PageBanner from '../components/PageBanner.astro';
+import Faq from '../components/Faq.astro';
+import SlutCta from '../components/SlutCta.astro';
+import { faq } from '../data/faq';
+
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faq.map((f) => ({
+      '@type': 'Question',
+      name: f.fraga,
+      acceptedAnswer: { '@type': 'Answer', text: f.svar },
+    })),
+  },
+];
+---
+
+<Bas
+  title="Frågor och svar"
+  description="Svar på vanliga frågor om öppettider, parkering, kloklippning, hundtrim, kurser, beställning av produkter och integritet hos Fyra Tassar i Borlänge."
+  jsonLd={schema}
+>
+  <div class="page-dark">
+  <PageBanner
+    titel="Frågor och svar"
+    ingress="Korta svar på det vi oftast får frågor om. Hittar du inte svaret – hör av dig."
+    steg={[{ text: 'Frågor och svar' }]}
+  />
+
+  <section class="section--tight">
+    <div class="container container--narrow">
+      <Faq poster={faq} />
+    </div>
+  </section>
+
+  <SlutCta rubrik="Hittade du inte svaret?" text="Ring, mejla eller kom förbi så hjälper vi dig." />
+  </div>
+</Bas>

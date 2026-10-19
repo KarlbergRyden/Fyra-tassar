@@ -1,0 +1,47 @@
+---
+import Icon from './Icon.astro';
+import type { Lank } from '../data/tjanster';
+
+interface Props {
+  rubrik: string;
+  text: string;
+  tid?: string;
+  villkor?: string[];
+  cta: Lank;
+}
+const { rubrik, text, tid, villkor, cta } = Astro.props;
+---
+
+<aside class="card" aria-labelledby="pris-rubrik">
+  <p class="eyebrow mb-0" id="pris-rubrik">Pris</p>
+  <p class="mb-0" style="font: 800 2.1rem/1.1 var(--font-display); letter-spacing:-0.03em">{rubrik}</p>
+  <p>{text}</p>
+  {
+    tid && (
+      <p>
+        <strong>Tid:</strong> {tid}
+      </p>
+    )
+  }
+  {
+    villkor && villkor.length > 0 && (
+      <div>
+        <p class="mb-0"><strong>Villkor</strong></p>
+        <ul class="checklist" style="margin-top: .5rem">
+          {villkor.map((v) => (
+            <li><Icon namn="shield" storlek={20} /><span>{v}</span></li>
+          ))}
+        </ul>
+      </div>
+    )
+  }
+  <a
+    class="btn"
+    href={cta.href}
+    {...(cta.extern ? { rel: 'noopener', target: '_blank' } : {})}
+    data-spor="tjanst-cta"
+  >
+    {cta.text}
+    {cta.extern && <span class="sr-only"> (öppnas i ny flik)</span>}
+  </a>
+</aside>

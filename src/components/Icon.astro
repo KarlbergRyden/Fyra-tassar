@@ -1,0 +1,63 @@
+---
+/** Samling enkla linjeikoner (24×24). Dekorativa som standard (aria-hidden). */
+interface Props {
+  namn: string;
+  storlek?: number;
+  titel?: string;
+  class?: string;
+}
+const { namn, storlek = 24, titel, class: klass } = Astro.props;
+
+const ikoner: Record<string, string> = {
+  paw: '<ellipse cx="6.5" cy="11" rx="2" ry="2.6"/><ellipse cx="10" cy="6.5" rx="2" ry="2.6"/><ellipse cx="14" cy="6.5" rx="2" ry="2.6"/><ellipse cx="17.5" cy="11" rx="2" ry="2.6"/><path d="M12 12.5c-2.6 0-5.5 2.8-5.5 5.2 0 1.7 1.4 2.3 2.6 2.3 1 0 1.7-.5 2.9-.5s1.9.5 2.9.5c1.2 0 2.6-.6 2.6-2.3 0-2.4-2.9-5.2-5.5-5.2z"/>',
+  dog: '<path d="M10 5.2c-.8-1.2-1.7-1.8-3-1.8-1.7 0-3 1.2-3 4v3c0 1.1.5 2 1.4 2.4M14 5.2c.8-1.2 1.7-1.8 3-1.8 1.7 0 3 1.2 3 4v3c0 1.1-.5 2-1.4 2.4"/><path d="M5.4 12.6C5 14 5 15 5 15.5 5 18.5 8 21 12 21s7-2.5 7-5.5c0-.5 0-1.500-.4-2.900"/><path d="M10 5.2C10.600 5 11.300 5 12 5s1.400 0 2 .2"/><path d="M9.500 12.500h.01M14.500 12.500h.01"/><path d="M10.500 16.200c.5.5 1 .8 1.500.8s1-.3 1.500-.8"/>',
+  cat: '<path d="M12 5c-1.600 0-3 .4-4 1L5 3v6c-1 1-1.500 2.400-1.500 4 0 4 3.500 7 8.500 7s8.500-3 8.500-7c0-1.600-.5-3-1.500-4V3l-3 3c-1-.6-2.400-1-4-1z"/><path d="M9 12.500h.01M15 12.500h.01"/><path d="M10.500 15.500c.4.400.9.600 1.500.6s1.100-.2 1.500-.6M3 15.500l3.500-.5M21 15.500 17.500 15"/>',
+  scissors:
+    '<circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.120 15.880M14.470 14.480 20 20M8.120 8.120 12 12"/>',
+  heart:
+    '<path d="M19 14c1.490-1.460 3-3.210 3-5.500A5.500 5.500 0 0 0 16.500 3c-1.760 0-3 .5-4.500 2-1.500-1.500-2.740-2-4.500-2A5.500 5.500 0 0 0 2 8.500c0 2.300 1.500 4.050 3 5.500l7 7z"/>',
+  clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  pin: '<path d="M12 21s-6.500-5.600-6.500-10.500a6.500 6.500 0 0 1 13 0C18.500 15.400 12 21 12 21z"/><circle cx="12" cy="10.500" r="2.300"/>',
+  phone:
+    '<path d="M22 16.920v3a2 2 0 0 1-2.180 2 19.790 19.790 0 0 1-8.630-3.070 19.500 19.500 0 0 1-6-6 19.790 19.790 0 0 1-3.070-8.670A2 2 0 0 1 4.110 2h3a2 2 0 0 1 2 1.720 12.840 12.840 0 0 0 .7 2.810 2 2 0 0 1-.45 2.110L8.090 9.910a16 16 0 0 0 6 6l1.270-1.270a2 2 0 0 1 2.110-.45 12.840 12.840 0 0 0 2.810.7A2 2 0 0 1 22 16.920z"/>',
+  mail: '<rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/>',
+  arrow: '<path d="M5 12h14M12 5l7 7-7 7"/>',
+  check: '<path d="M20 6 9 17l-5-5"/>',
+  x: '<path d="M18 6 6 18M6 6l12 12"/>',
+  menu: '<path d="M4 6h16M4 12h16M4 18h16"/>',
+  chevron: '<path d="m6 9 6 6 6-6"/>',
+  tag: '<path d="M20.600 13.400 13.400 20.600a2 2 0 0 1-2.800 0L2 12V2h10l8.600 8.600a2 2 0 0 1 0 2.800z"/><circle cx="7" cy="7" r="1"/>',
+  cap: '<path d="M22 10 12 5 2 10l10 5z"/><path d="M6 12v5c3 2 9 2 12 0v-5"/>',
+  box: '<path d="M21 8 12 3 3 8v8l9 5 9-5z"/><path d="m3 8 9 5 9-5M12 13v8"/>',
+  shield: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/>',
+  parking: '<rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9.500 17V7H13a3 3 0 0 1 0 6H9.500"/>',
+  external: '<path d="M15 3h6v6M10 14 21 3M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>',
+  facebook:
+    '<path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>',
+  instagram:
+    '<rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.500 6.500h.01"/>',
+  message: '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+  star: '<path d="m12 2.500 2.900 6 6.600.9-4.800 4.600 1.200 6.500L12 17.400 6.100 20.500l1.200-6.500L2.500 9.400l6.600-.9z" fill="currentColor"/>',
+  store: '<path d="M3 9 5 3h14l2 6M3 9h18M3 9v11h18V9"/><path d="M9 20v-6h6v6"/>',
+};
+
+const inre = ikoner[namn] ?? '';
+---
+
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width={storlek}
+  height={storlek}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.75"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  class:list={['icon', klass]}
+  role={titel ? 'img' : undefined}
+  aria-label={titel}
+  aria-hidden={titel ? undefined : 'true'}
+  focusable="false"
+  set:html={(titel ? `<title>${titel}</title>` : '') + inre}
+/>

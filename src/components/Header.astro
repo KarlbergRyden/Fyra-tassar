@@ -1,0 +1,87 @@
+---
+import Icon from './Icon.astro';
+import Bild from './Bild.astro';
+import { site } from '../data/site';
+import { meny } from '../data/nav';
+
+const { pathname } = Astro.url;
+const aktiv = (href: string) => (href === '/' ? pathname === '/' : pathname.startsWith(href));
+---
+
+<header class="site-header" data-header>
+  <div class="container site-header__in">
+    <a class="site-header__logo" href="/" aria-label={`${site.namn} – startsidan`}>
+      <Bild namn="logoBanner" alt="" sizes="(min-width: 40rem) 76px, 60px" prioritet />
+    </a>
+
+    <nav class="site-nav" aria-label="Huvudmeny">
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="huvudmeny" data-nav-toggle>
+        <Icon namn="menu" class="icon-open" storlek={20} />
+        <Icon namn="x" class="icon-close" storlek={20} />
+        <span>Meny</span>
+      </button>
+      <div class="nav" id="huvudmeny" data-nav>
+        <ul class="nav__list">
+          {
+            meny.map((m) => (
+              <li>
+                <a class="nav__link" href={m.href} aria-current={aktiv(m.href) ? 'page' : undefined}>
+                  {m.text}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+        <div class="nav__extra">
+          <a href={site.telefon.href} data-spor="ring"><Icon namn="phone" storlek={18} />{site.telefon.visning}</a>
+          <a href={`mailto:${site.epost}`} data-spor="epost"><Icon namn="mail" storlek={18} />{site.epost}</a>
+          <a class="btn btn--sm" href={site.bokningUrl} rel="noopener" data-spor="boka-kloklippning">Boka kloklippning</a>
+        </div>
+      </div>
+    </nav>
+
+    <a class="btn btn--sm site-header__cta" href={site.bokningUrl} rel="noopener" data-spor="boka-kloklippning">
+      Boka kloklippning
+    </a>
+  </div>
+</header>
+
+<script>
+  const header = document.querySelector<HTMLElement>('[data-header]');
+  const toggle = document.querySelector<HTMLButtonElement>('[data-nav-toggle]');
+  const nav = document.querySelector<HTMLElement>('[data-nav]');
+  const desktop = window.matchMedia('(min-width: 72rem)');
+
+  // Glaseffekt när man scrollat ned från toppen
+  const markera = () => {
+    const glas = window.scrollY > 24 || toggle?.getAttribute('aria-expanded') === 'true';
+    if (header) header.dataset.glass = String(glas);
+  };
+  markera();
+  window.addEventListener('scroll', markera, { passive: true });
+
+  function satt(oppen: boolean) {
+    if (!toggle || !nav) return;
+    toggle.setAttribute('aria-expanded', String(oppen));
+    nav.dataset.open = String(oppen);
+    markera();
+  }
+
+  toggle?.addEventListener('click', () => satt(toggle.getAttribute('aria-expanded') !== 'true'));
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && toggle?.getAttribute('aria-expanded') === 'true') {
+      satt(false);
+      toggle.focus();
+    }
+  });
+  document.addEventListener('click', (e) => {
+    if (toggle?.getAttribute('aria-expanded') !== 'true') return;
+    const mal = e.target as Node;
+    if (!nav?.contains(mal) && !toggle.contains(mal)) satt(false);
+  });
+  nav?.addEventListener('click', (e) => {
+    if ((e.target as HTMLElement).closest('a')) satt(false);
+  });
+  desktop.addEventListener('change', () => satt(false));
+</script>

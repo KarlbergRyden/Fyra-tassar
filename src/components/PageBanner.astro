@@ -1,0 +1,34 @@
+---
+/**
+ * Sidbanner för undersidor – som originalets bildbanner: foto med mörk toning
+ * (eller helsvart band utan foto), brödsmulor, H1 och ingress. Knappar via slot.
+ */
+import Breadcrumbs from './Breadcrumbs.astro';
+import Bild from './Bild.astro';
+import Icon from './Icon.astro';
+import type { BildNamn } from '../data/bilder';
+
+interface Props {
+  titel: string;
+  ingress?: string;
+  steg: { text: string; href?: string }[];
+  foto?: BildNamn;
+  ikon?: string;
+  etikett?: string;
+}
+const { titel, ingress, steg, foto, ikon, etikett } = Astro.props;
+---
+
+<section class:list={['page-banner', 'on-dark', foto && 'page-banner--foto']}>
+  {foto && <Bild class="page-banner__img" namn={foto} sizes="100vw" prioritet />}
+  <div class="container page-banner__in">
+    <Breadcrumbs steg={steg} />
+    <div>
+      {ikon && <span class="card__icon" style="margin-bottom: 1rem"><Icon namn={ikon} /></span>}
+      {etikett && <p class="eyebrow">{etikett}</p>}
+      <h1>{titel}</h1>
+      {ingress && <p class="lead">{ingress}</p>}
+      <div class="btn-row"><slot /></div>
+    </div>
+  </div>
+</section>

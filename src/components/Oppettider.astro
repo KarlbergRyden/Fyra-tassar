@@ -1,0 +1,37 @@
+---
+/**
+ * Veckans öppettider som tabell. Markerar dagens rad och uppdaterar status
+ * ("Öppet nu") i webbläsaren – byggs utan JS som ren tabell.
+ */
+import { oppettiderMonSun, tid } from '../data/site';
+
+interface Props {
+  rubrik?: string;
+  class?: string;
+}
+const { class: klass } = Astro.props;
+---
+
+<table class:list={['hours', klass]} data-oppettider-tabell>
+  <caption class="sr-only">Öppettider</caption>
+  <tbody>
+    {
+      oppettiderMonSun.map((o) => (
+        <tr data-dag={o.dag}>
+          <th scope="row">{o.namn}</th>
+          <td>{o.oppnar && o.stanger ? `${tid(o.oppnar)} – ${tid(o.stanger)}` : 'Stängt'}</td>
+        </tr>
+      ))
+    }
+  </tbody>
+</table>
+
+<script>
+  import { svenskTid } from '../lib/oppettider';
+  const idag = svenskTid(new Date()).dag;
+  document
+    .querySelectorAll<HTMLTableRowElement>('[data-oppettider-tabell] tr[data-dag]')
+    .forEach((rad) => {
+      if (Number(rad.dataset.dag) === idag) rad.dataset.idag = 'true';
+    });
+</script>

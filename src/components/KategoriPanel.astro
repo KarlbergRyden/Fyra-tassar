@@ -1,0 +1,48 @@
+---
+/**
+ * Helbredds-panel för en produktkategori (hund/katt): bild i bakgrunden med rörelse
+ * (inzoomning från dis, parallax, ljuspunkt som följer musen) och informationen framför i glas.
+ */
+import Icon from './Icon.astro';
+import Bild from './Bild.astro';
+import { site } from '../data/site';
+import type { Kategori } from '../data/produkter';
+import type { BildNamn } from '../data/bilder';
+
+interface Props {
+  kategori: Kategori;
+  bild: BildNamn;
+  /** Vilken sida texten ligger på */
+  sida?: 'vanster' | 'hoger';
+  rubrik: string;
+}
+const { kategori: k, bild, sida = 'vanster', rubrik } = Astro.props;
+---
+
+<section
+  class:list={['cat-panel', 'on-dark', `cat-panel--${sida}`]}
+  id={k.id}
+  data-kategori={k.id}
+  data-inview
+  aria-labelledby={`${k.id}-rubrik`}
+>
+  <div class="cat-panel__media" data-parallax>
+    <Bild class="cat-panel__img" namn={bild} alt="" sizes="100vw" />
+  </div>
+  <span class="cat-panel__ghost" aria-hidden="true">{k.namn}</span>
+
+  <div class="container cat-panel__in">
+    <div class="cat-panel__text" data-reveal>
+      <p class="eyebrow"><Icon namn={k.ikon} storlek={20} />{k.namn}</p>
+      <h2 id={`${k.id}-rubrik`}>{rubrik}</h2>
+      <p class="cat-panel__intro">{k.intro}</p>
+      <ul class="chips chips--glass" aria-label={`Sortiment för ${k.namn.toLowerCase()}`}>
+        {k.artiklar.map((a) => <li>{a}</li>)}
+      </ul>
+      <div class="btn-row">
+        <a class="btn" href={site.telefon.href} data-spor="ring"><Icon namn="phone" storlek={18} />Fråga i butiken</a>
+        <a class="btn btn--light" href="#kampanjer">Se kampanjer</a>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,51 @@
+---
+/** Omdömen och Google-betyg. Renderas bara om det finns riktiga uppgifter i src/data/omdomen.ts. */
+import Icon from './Icon.astro';
+import { googleBetyg, harOmdomen, publiceradeOmdomen } from '../data/omdomen';
+
+const citat = publiceradeOmdomen();
+const visa = harOmdomen();
+---
+
+{
+  visa && (
+    <section class="section section--tint" aria-labelledby="omdomen-rubrik">
+      <div class="container">
+        <div class="section-head" data-reveal>
+          <div>
+            <p class="eyebrow">Omdömen</p>
+            <h2 id="omdomen-rubrik">Det säger kunderna</h2>
+          </div>
+          {
+            googleBetyg && (
+              <a class="betyg" href={googleBetyg.url} target="_blank" rel="noopener noreferrer">
+                <span class="betyg__stjarnor" aria-hidden="true">
+                  {[0, 1, 2, 3, 4].map(() => <Icon namn="star" storlek={22} />)}
+                </span>
+                <span>
+                  <strong>{googleBetyg.betyg.toLocaleString('sv-SE', { minimumFractionDigits: 1 })} av 5</strong>
+                  <small>{googleBetyg.antal} omdömen på Google</small>
+                </span>
+                <span class="sr-only"> (öppnas i ny flik)</span>
+              </a>
+            )
+          }
+        </div>
+        {
+          citat.length > 0 && (
+            <ul class="citat" data-reveal-stagger>
+              {citat.map((o) => (
+                <li>
+                  <blockquote>
+                    <p>{o.text}</p>
+                    <footer>{o.namn}</footer>
+                  </blockquote>
+                </li>
+              ))}
+            </ul>
+          )
+        }
+      </div>
+    </section>
+  )
+}

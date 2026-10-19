@@ -1,0 +1,23 @@
+---
+interface Props {
+  steg: { text: string; href?: string }[];
+}
+const { steg } = Astro.props;
+const alla = [{ text: 'Startsidan', href: '/' }, ...steg];
+---
+
+<nav class="breadcrumbs" aria-label="Brödsmulor">
+  <ol>
+    {
+      alla.map((s, i) => (
+        <li>
+          {s.href && i < alla.length - 1 ? (
+            <a href={s.href}>{s.text}</a>
+          ) : (
+            <span aria-current="page">{s.text}</span>
+          )}
+        </li>
+      ))
+    }
+  </ol>
+</nav>
