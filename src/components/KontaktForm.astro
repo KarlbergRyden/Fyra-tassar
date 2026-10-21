@@ -138,7 +138,6 @@ const endpoint = site.formularEndpoint;
 </div>
 
 <script>
-  import { spara } from '../lib/spar';
   import { byggMailto, forifyllMeddelande, validera, type FaltNamn, type Formularvarden } from '../lib/formular';
 
   const wrap = document.querySelector<HTMLElement>('[data-form-wrap]');
@@ -228,7 +227,8 @@ const endpoint = site.formularEndpoint;
     }
 
     function lyckat(tex?: string, handelse = 'formular-skickat') {
-      if (handelse) spara(handelse);
+      // Mätningen (src/scripts/liv.ts) lyssnar; formuläret behöver inte känna till den
+      if (handelse) document.dispatchEvent(new CustomEvent('ft:handelse', { detail: handelse }));
       form!.hidden = true;
       serverfel.hidden = true;
       if (tex) okText.innerHTML = tex;

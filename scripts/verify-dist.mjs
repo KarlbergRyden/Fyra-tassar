@@ -62,17 +62,39 @@ for (const [url, kalla] of sidor) {
   else {
     if (titlar.has(title)) rapport(`dubblett av title (även ${titlar.get(title)}): "${title}"`);
     titlar.set(title, url);
-    if (title.length > 70) varning.push(`${url}: title är ${title.length} tecken`);
+    if (title.length > 65) rapport(`title är ${title.length} tecken (max 65, annars kapas den i sökresultaten)`);
+    else if (title.length > 60) varning.push(`${url}: title är ${title.length} tecken`);
+    else if (title.length < 25 && url !== '/404.html') varning.push(`${url}: title är kort (${title.length} tecken)`);
   }
   const desc = kalla.match(/<meta name="description" content="([^"]*)"/)?.[1];
   if (!desc) rapport('saknar meta description');
   else {
     if (beskrivningar.has(desc)) rapport(`dubblett av meta description (även ${beskrivningar.get(desc)})`);
     beskrivningar.set(desc, url);
-    if (desc.length > 175) varning.push(`${url}: description är ${desc.length} tecken`);
+    if (desc.length > 165) rapport(`description är ${desc.length} tecken (max 165)`);
+    else if (desc.length < 90 && url !== '/404.html') varning.push(`${url}: description är kort (${desc.length} tecken)`);
   }
   if (!/<link rel="canonical" href="https:\/\/fyratassar\.nu[^"]*"/.test(kalla)) rapport('saknar canonical');
   if (!/<meta property="og:title"/.test(kalla)) rapport('saknar Open Graph');
+  if (!/<meta name="twitter:title"/.test(kalla)) rapport('saknar Twitter-kort');
+  const robots = kalla.match(/<meta name="robots" content="([^"]*)"/)?.[1] ?? '';
+  const ska404 = url === '/404.html';
+  if (ska404 && !/noindex/.test(robots)) rapport('404-sidan ska vara noindex');
+  if (!ska404 && /noindex/.test(robots)) rapport('sidan är noindex men ska indexeras');
+  if (!ska404 && !/<link rel="alternate" hreflang="sv"/.test(kalla)) rapport('saknar hreflang');
+  // Strukturerad data: giltig JSON med @context och @type
+  const ldTyper = [];
+  for (const m of kalla.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)) {
+    try {
+      const j = JSON.parse(m[1]);
+      if (!j['@context'] || !j['@type']) rapport('JSON-LD utan @context/@type');
+      else ldTyper.push(j['@type']);
+    } catch {
+      rapport('JSON-LD är inte giltig JSON');
+    }
+  }
+  if (!ska404 && !ldTyper.includes('PetStore')) rapport('saknar strukturerad data för butiken (PetStore)');
+  if (url === '/' && !ldTyper.includes('WebSite')) rapport('startsidan saknar WebSite-data');
 
   const h1 = (kalla.match(/<h1[\s>]/g) ?? []).length;
   if (h1 !== 1) rapport(`${h1} st <h1> (ska vara 1)`);

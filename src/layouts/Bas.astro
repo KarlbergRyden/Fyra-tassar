@@ -7,8 +7,12 @@ import latinTypsnitt from '../../node_modules/@fontsource-variable/source-sans-3
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import SnabbFalt from '../components/SnabbFalt.astro';
+import Intro from '../components/Intro.astro';
 import { site } from '../data/site';
 import { oppettiderSchema } from '../lib/oppettider';
+import { bild } from '../data/bilder';
+import { team } from '../data/team';
+import { tjanster } from '../data/tjanster';
 
 interface Props {
   title: string;
@@ -19,11 +23,14 @@ interface Props {
   ogBild?: string;
   /** Extra JSON-LD-block för sidan */
   jsonLd?: Record<string, unknown>[];
+  /** Schema.org-typ för sidan i sig (standard WebPage) */
+  sidtyp?: 'WebPage' | 'ContactPage' | 'AboutPage' | 'CollectionPage';
 }
 
-const { title, description, heltTitel = false, noindex = false, ogBild = '/og-bild.png', jsonLd = [] } = Astro.props;
+const { title, description, heltTitel = false, noindex = false, ogBild = '/og-bild.png', jsonLd = [], sidtyp = 'WebPage' } = Astro.props;
 
-const fullTitel = heltTitel ? title : `${title} | ${site.namn}`;
+// Kort varumärke i titeln ("| Fyra Tassar") så att nyckelorden får plats inom ca 60 tecken
+const fullTitel = heltTitel ? title : `${title} | ${site.kortnamn}`;
 const canonical = new URL(Astro.url.pathname, site.url).href;
 const ogUrl = new URL(ogBild, site.url).href;
 
@@ -35,14 +42,35 @@ const foretag = {
   legalName: site.juridisktNamn,
   description: site.beskrivning,
   url: site.url,
+  slogan: site.slogan,
   telephone: site.telefon.href.replace('tel:', ''),
   email: site.epost,
   image: ogUrl,
+  logo: new URL(bild('logo').src, site.url).href,
+  currenciesAccepted: 'SEK',
+  contactPoint: {
+    '@type': 'ContactPoint',
+    contactType: 'customer service',
+    telephone: site.telefon.href.replace('tel:', ''),
+    email: site.epost,
+    availableLanguage: 'sv',
+  },
+  employee: team.map((p) => ({ '@type': 'Person', name: p.namn, jobTitle: p.roll })),
+  knowsAbout: ['hundfoder', 'kattfoder', 'kloklippning', 'hundtrim', 'hundkurser', 'hundfriskvård'],
+  hasOfferCatalog: {
+    '@type': 'OfferCatalog',
+    name: 'Tjänster',
+    itemListElement: tjanster.map((t) => ({
+      '@type': 'Offer',
+      itemOffered: { '@type': 'Service', name: t.namn, url: new URL(`/tjanster/${t.slug}/`, site.url).href },
+    })),
+  },
   address: {
     '@type': 'PostalAddress',
     streetAddress: site.adress.gata,
     postalCode: site.adress.postnummer,
     addressLocality: site.adress.ort,
+    addressRegion: 'Dalarnas län',
     addressCountry: 'SE',
   },
   hasMap: site.adress.kartaUrl,
@@ -50,6 +78,30 @@ const foretag = {
   sameAs: site.sociala.map((s) => s.url),
   areaServed: site.adress.ort,
 };
+
+// Webbplatsens namn i sökresultaten (bara på startsidan) och sidan själv, kopplade till butiken
+const webbplats = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': `${site.url}/#webbplats`,
+  url: site.url,
+  name: site.namn,
+  alternateName: site.kortnamn,
+  inLanguage: 'sv',
+  publisher: { '@id': `${site.url}/#butik` },
+};
+const sida = {
+  '@context': 'https://schema.org',
+  '@type': sidtyp,
+  '@id': `${canonical}#sida`,
+  url: canonical,
+  name: fullTitel,
+  description,
+  inLanguage: 'sv',
+  isPartOf: { '@id': `${site.url}/#webbplats` },
+  about: { '@id': `${site.url}/#butik` },
+};
+const ldBlock = [...(Astro.url.pathname === '/' ? [webbplats] : []), ...(noindex ? [] : [sida]), ...jsonLd];
 ---
 
 <!doctype html>
@@ -60,7 +112,14 @@ const foretag = {
     <title>{fullTitel}</title>
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
-    {noindex && <meta name="robots" content="noindex, follow" />}
+    <meta
+      name="robots"
+      content={noindex ? 'noindex, follow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'}
+    />
+    {!noindex && <link rel="alternate" hreflang="sv" href={canonical} />}
+    {!noindex && <link rel="alternate" hreflang="x-default" href={canonical} />}
+    {site.verifiering.google && <meta name="google-site-verification" content={site.verifiering.google} />}
+    {site.verifiering.bing && <meta name="msvalidate.01" content={site.verifiering.bing} />}
     <meta name="theme-color" content="#141414" />
     <meta name="generator" content={Astro.generator} />
     <link rel="preload" href={latinTypsnitt} as="font" type="font/woff2" crossorigin />
@@ -81,12 +140,44 @@ const foretag = {
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content={`${site.namn} – ${site.slogan}`} />
     <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitel} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogUrl} />
 
     <script type="application/ld+json" set:html={JSON.stringify(foretag)} />
-    {jsonLd.map((b) => <script type="application/ld+json" set:html={JSON.stringify(b)} />)}
+    {ldBlock.map((b) => <script type="application/ld+json" set:html={JSON.stringify(b)} />)}
 
     <script is:inline>
       document.documentElement.classList.add('js');
+      // Inladdningsvy: bara på startsidan, en gång per besök och aldrig vid "reducera rörelse".
+      // Sidans egna animationer väntar tills ridån lyfts; en säkerhetstimer släpper dem alltid.
+      (function () {
+        var d = document.documentElement;
+        try {
+          if (location.pathname !== '/' || sessionStorage.getItem('ft-intro')) return;
+          if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+          sessionStorage.setItem('ft-intro', '1');
+        } catch (e) {
+          return;
+        }
+        var start = Date.now();
+        var klar = false;
+        function slut() {
+          if (klar) return;
+          klar = true;
+          d.classList.add('intro-klar');
+          setTimeout(function () {
+            d.classList.remove('intro-pa');
+          }, 1000);
+        }
+        function laddad() {
+          setTimeout(slut, Math.max(1200 - (Date.now() - start), 0));
+        }
+        d.classList.add('intro-pa');
+        if (document.readyState === 'complete') laddad();
+        else addEventListener('load', laddad);
+        setTimeout(slut, 2600);
+      })();
     </script>
 
     {
@@ -122,6 +213,7 @@ const foretag = {
     </noscript>
   </head>
   <body>
+    <Intro />
     <a class="skip-link" href="#innehall">Hoppa till innehållet</a>
     <Header />
     <main id="innehall" tabindex="-1">

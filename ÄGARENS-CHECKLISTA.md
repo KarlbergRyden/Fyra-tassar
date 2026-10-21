@@ -15,8 +15,9 @@ Allt på sajten bygger på uppgifter från den gamla sajten fyratassar.nu (hämt
 
 ## 2. Direkt efter lansering
 
-- [ ] Skicka sitemapen (`/sitemap-index.xml`) till Google Search Console och testa kontaktformuläret med ett riktigt meddelande.
-- [ ] Uppdatera Google-företagsprofil och Bokadirekt så att de pekar på den nya sajten.
+- [ ] **Sök­motorer:** lägg till sajten i Google Search Console och Bing Webmaster Tools, skicka in sitemapen (`/sitemap-index.xml`) och testa kontaktformuläret med ett riktigt meddelande. Verifierar ni med en metatagg: fyll i `PUBLIC_GOOGLE_VERIFICATION` / `PUBLIC_BING_VERIFICATION` i `.env`.
+- [ ] **Google-företagsprofil** är det som viktigast driver lokala sökningar ("djurbutik Borlänge"). Använd exakt samma namn, adress och telefonnummer som på sajten (`src/data/site.ts`), lägg in webbadressen, öppettider och foton, och be nöjda kunder om omdömen. Gör samma sak på Bokadirekt och andra kataloger.
+- [ ] **En enda adress:** låt `http://` och `www.` omdirigeras till `https://fyratassar.nu` hos hosten, annars delas länkvärdet upp.
 - [ ] **Egna foton** (fasad, interiör, personalporträtt, produkter) ökar förtroendet mer än något annat. Följ `FOTOGUIDE.md`: lägg filerna i `source-images/foton/` och kör `npm run images`. De visas av sig själva.
 - [ ] **Omdömen:** lägg in Google-betyg eller citat (med kundens skriftliga tillstånd) i `src/data/omdomen.ts`. Sektionen visas då automatiskt.
 - [ ] **Slå på mätningen** så ni ser vad som ger samtal, bokningar och förfrågningar: skapa ett konto hos Plausible eller GoatCounter och fyll i `.env` (se README, avsnittet *Mätning*). Utan det mäts ingenting.

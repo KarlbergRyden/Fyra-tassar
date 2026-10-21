@@ -1,0 +1,14 @@
+# Gäller på Netlify och Cloudflare Pages (andra hosts ignorerar filen; sätt samma regler hos hosten).
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), interest-cohort=()
+
+# Filer med innehållshash i namnet ändras aldrig: cacha ett år
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Bilderna har fasta filnamn (byts ett foto ligger ändringen ute inom en vecka)
+/images/*
+  Cache-Control: public, max-age=604800

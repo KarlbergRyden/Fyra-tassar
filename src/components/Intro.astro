@@ -1,0 +1,38 @@
+---
+/**
+ * Inladdningsvy: fyra tassar "går" över skärmen, sedan lyfts ridån och sidan visas.
+ * Visas bara på startsidan, en gång per besök (se skriptet i Bas.astro) och aldrig vid "reducera rörelse".
+ * Utan JavaScript syns den aldrig. Rent dekorativ: gömd för skärmläsare och tar inte emot klick.
+ */
+import { site } from '../data/site';
+
+// Samma gång som tassspåret på sidorna: två steg uppåt, två nedåt
+const tassar = [
+  { x: 48, y: 56, r: -14 },
+  { x: 178, y: 30, r: 12 },
+  { x: 308, y: 56, r: -14 },
+  { x: 438, y: 30, r: 12 },
+];
+---
+
+<div class="intro" aria-hidden="true">
+  <div class="intro__in">
+    <svg class="intro__spar" viewBox="0 0 520 90" focusable="false">
+      {
+        tassar.map((t, i) => (
+          <g transform={`translate(${t.x} ${t.y}) rotate(${t.r}) scale(2.6) translate(-12 -12)`}>
+            <g class="paw" style={`--i:${i}`}>
+              <ellipse cx="6.5" cy="11" rx="2" ry="2.6" />
+              <ellipse cx="10" cy="6.5" rx="2" ry="2.6" />
+              <ellipse cx="14" cy="6.5" rx="2" ry="2.6" />
+              <ellipse cx="17.5" cy="11" rx="2" ry="2.6" />
+              <path d="M12 12.5c-2.6 0-5.5 2.8-5.5 5.2 0 1.7 1.4 2.3 2.6 2.3 1 0 1.7-.5 2.9-.5s1.9.5 2.9.5c1.2 0 2.6-.6 2.6-2.3 0-2.4-2.9-5.2-5.5-5.2z" />
+            </g>
+          </g>
+        ))
+      }
+    </svg>
+    <p class="intro__namn">{site.kortnamn}</p>
+    <p class="intro__ort">i {site.adress.ort}</p>
+  </div>
+</div>

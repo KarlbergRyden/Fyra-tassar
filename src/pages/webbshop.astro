@@ -17,6 +17,7 @@ const oppen = webbshopOppen();
 
 <Bas
   title="Webbshop för hund och katt"
+  sidtyp="CollectionPage"
   description="Webbshop för hund och katt i Borlänge, öppnar snart. Foder, koppel, sängar, kattsand och klösträd. Hela sortimentet finns i butiken."
 >
   <div class="page-dark">
@@ -34,7 +35,7 @@ const oppen = webbshopOppen();
 
     <h2 class="sr-only">Produktkategorier</h2>
     <div class="container">
-      <div class="filter" role="group" aria-label="Visa produkter för" data-filter hidden>
+      <div class="filter" role="group" aria-label="Visa produkter för" data-filter>
         <button class="filter__btn" type="button" data-visa="alla" aria-pressed="true">Alla</button>
         <button class="filter__btn" type="button" data-visa="hund" aria-pressed="false">Hund</button>
         <button class="filter__btn" type="button" data-visa="katt" aria-pressed="false">Katt</button>
@@ -47,10 +48,10 @@ const oppen = webbshopOppen();
         <h3 class="shop__rubrik" id="shop-hund" data-reveal>
           {oppen ? 'Webbshop – hund' : 'Snart i webbshopen – hund'}
         </h3>
-        <div class="shop__grid" data-reveal-stagger>
+        <div class="shop__grid" data-kompakt="true" data-reveal-stagger>
           {produkterFor('hund').map((p, i) => <ProduktKort produkt={p} extra={i >= 4} />)}
         </div>
-        <p class="shop__mer" hidden data-mer>
+        <p class="shop__mer" data-mer>
           <button class="btn btn--light btn--sm" type="button" aria-expanded="false" data-visa-alla>Visa alla</button>
         </p>
       </div>
@@ -62,10 +63,10 @@ const oppen = webbshopOppen();
         <h3 class="shop__rubrik" id="shop-katt" data-reveal>
           {oppen ? 'Webbshop – katt' : 'Snart i webbshopen – katt'}
         </h3>
-        <div class="shop__grid" data-reveal-stagger>
+        <div class="shop__grid" data-kompakt="true" data-reveal-stagger>
           {produkterFor('katt').map((p, i) => <ProduktKort produkt={p} extra={i >= 4} />)}
         </div>
-        <p class="shop__mer" hidden data-mer>
+        <p class="shop__mer" data-mer>
           <button class="btn btn--light btn--sm" type="button" aria-expanded="false" data-visa-alla>Visa alla</button>
         </p>
       </div>
@@ -182,7 +183,10 @@ const oppen = webbshopOppen();
     const extra = grid.querySelectorAll('[data-extra]').length;
     const rad = grid.parentElement?.querySelector<HTMLElement>('[data-mer]');
     const knapp = rad?.querySelector<HTMLButtonElement>('[data-visa-alla]');
-    if (!extra || !rad || !knapp) return;
+    if (!extra || !rad || !knapp) {
+      if (rad) rad.hidden = true; // inget att fälla ut
+      return;
+    }
     const totalt = grid.querySelectorAll('.produkt').length;
     grid.dataset.kompakt = 'true';
     knapp.textContent = `Visa alla ${totalt}`;

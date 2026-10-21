@@ -45,6 +45,7 @@ const schema = erbjudanden.length
 
 <Bas
   title="Erbjudanden på hund- och kattfoder"
+  sidtyp="CollectionPage"
   description="Aktuella foderkampanjer hos Fyra Tassar i Borlänge: FourFriends, HappyDog, Happycat och Taste of the Wild till kampanjpris."
   jsonLd={schema}
 >
@@ -73,7 +74,7 @@ const schema = erbjudanden.length
         {
           erbjudanden.length > 0 ? (
             <>
-              <div class="filter" role="group" aria-label="Visa erbjudanden för" data-filter hidden>
+              <div class="filter" role="group" aria-label="Visa erbjudanden för" data-filter>
                 <button class="filter__btn" type="button" data-visa="alla" aria-pressed="true">Alla</button>
                 <button class="filter__btn" type="button" data-visa="hund" aria-pressed="false">Hund</button>
                 <button class="filter__btn" type="button" data-visa="katt" aria-pressed="false">Katt</button>

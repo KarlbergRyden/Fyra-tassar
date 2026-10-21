@@ -11,7 +11,7 @@ mkdirSync(ut, { recursive: true });
 /** namn → { källa, bredder, kvalitet, beskärning? (extract i originalpixlar) } */
 const jobb = {
   logo: { kalla: 'site-logo.png', bredder: [320, 640], kvalitet: 88 },
-  hero: { kalla: 'slide-1.jpg', bredder: [640, 1280, 1920], kvalitet: 72 },
+  hero: { kalla: 'slide-1.jpg', bredder: [640, 800, 1280, 1920], kvalitet: 72 },
   bannerHund: { kalla: 'bild-1.jpg', bredder: [750, 1500], kvalitet: 72 },
   bannerSkog: { kalla: 'bild-2.jpg', bredder: [750, 1500], kvalitet: 72 },
   bannerKatt: { kalla: 'bild-3.jpg', bredder: [750, 1500], kvalitet: 72 },
@@ -104,10 +104,10 @@ await sharp(fav).resize(48, 48).png().toFile(`${rot}public/favicon-48.png`);
 await sharp(fav).resize(192, 192).png().toFile(`${rot}public/favicon-192.png`);
 await sharp(fav).resize(180, 180).flatten({ background: '#ffffff' }).png().toFile(`${rot}public/apple-touch-icon.png`);
 
-// Städa bort webp-filer från foton som tagits bort
+// Städa bort webp-filer (och avif-rester) från foton som tagits bort
 for (const f of readdirSync(ut)) {
   const klar = Object.values(manifest).some((v) => v.some((x) => x.fil === `/images/${f}`));
-  if (/-\d+\.webp$/.test(f) && !klar) {
+  if (/-\d+\.(webp|avif)$/.test(f) && !klar) {
     unlinkSync(`${ut}${f}`);
     console.log(`Tog bort ${f}`);
   }

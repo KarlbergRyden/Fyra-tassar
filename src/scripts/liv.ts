@@ -77,3 +77,5 @@ document.addEventListener('click', (e) => {
   const mal = (e.target as Element | null)?.closest<HTMLElement>('[data-spor]');
   if (mal?.dataset.spor) spara(mal.dataset.spor);
 });
+// Händelser från andra skript, t.ex. att kontaktformuläret skickats
+document.addEventListener('ft:handelse', (e) => spara(String((e as CustomEvent).detail)));

@@ -158,6 +158,16 @@ Som standard laddas ingen mätning alls, och då behövs ingen cookiebanner. Vil
 
 Sidvisningar mäts av tjänsten själv. Dessutom skickas en händelse varje gång någon trycker på en knapp eller länk med `data-spor="…"` (t.ex. `ring`, `boka-kloklippning`, `reservera`, `snabb-ring`) och när formuläret skickas (`formular-skickat`, `formular-mailto`). Koden finns i `src/lib/spar.ts` och `src/scripts/liv.ts`. Integritetspolicyn byter automatiskt text när en tjänst är påslagen. Behöver den valda lösningen samtycke måste en samtyckeshantering läggas till först.
 
+## SEO
+
+- **Titlar och beskrivningar:** varje sida har en unik titel (högst 65 tecken, siktet är ca 60, med "| Fyra Tassar" sist) och en unik beskrivning (90–165 tecken). `npm run verify` stoppar bygget vid för långa eller saknade.
+- **Lokala sökord** ("Borlänge" + tjänsten) finns i titlar, rubriker och beskrivningar. Skriv nya sidor på samma sätt, men bara med uppgifter som stämmer.
+- **Strukturerad data (JSON-LD):** butiken (`PetStore` med adress, öppettider, personal, tjänster, kontaktpunkt), webbplatsen (`WebSite`, startsidan), varje sida (`WebPage`/`ContactPage`/`AboutPage`/`CollectionPage`), brödsmulor, tjänster (`Service` med pris), kampanjer (`ItemList` med priser) och vanliga frågor (`FAQPage`). Verifieringen kontrollerar att alla block är giltig JSON.
+- **Meta:** canonical, hreflang (sv), Open Graph, Twitter-kort och `robots` med `max-image-preview:large`. 404-sidan och `/produkter/` är `noindex`.
+- **Sitemap** (`/sitemap-index.xml`) skapas automatiskt och listar bara sidor som ska indexeras. `robots.txt` pekar på den.
+- **Sökmotorverifiering:** fyll i `PUBLIC_GOOGLE_VERIFICATION` och/eller `PUBLIC_BING_VERIFICATION` i `.env` (se `.env.example`) om ni verifierar via metataggar.
+- Sidhastighet räknas också som rankningsfaktor. Vid senaste mätningen med Lighthouse låg alla sidor på 98–100 i prestanda i mobilprofil och 100 i desktop, med 100 i tillgänglighet, bästa praxis och SEO. Körs en gång till efter större ändringar (`npx lighthouse <adress>`).
+
 ## Kända begränsningar
 
 - Fotografierna är hämtade från den gamla sajten och ska bekräftas av ägaren (rättigheter, se `ÄGARENS-CHECKLISTA.md`).

@@ -84,6 +84,12 @@ export const site = {
   /** Valfri publik åtkomstnyckel som vissa formulärtjänster (t.ex. Web3Forms) kräver i anropet. */
   formularNyckel: (import.meta.env.PUBLIC_FORM_ACCESS_KEY as string | undefined) ?? '',
 
+  /** Verifieringskoder för Google Search Console och Bing Webmaster (valfria, sätts i .env). */
+  verifiering: {
+    google: (import.meta.env.PUBLIC_GOOGLE_VERIFICATION as string | undefined) ?? '',
+    bing: (import.meta.env.PUBLIC_BING_VERIFICATION as string | undefined) ?? '',
+  },
+
   /**
    * Hur mycket sidan rör sig. 'lugn': rubrikens ordintro, sidövergångar och mjuk inglidning.
    * 'full': dessutom tassspår, rullande märkesrad, uppräkning av siffror, lutande kort och magnetknappar.

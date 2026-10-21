@@ -3954,12 +3954,26 @@ textarea.input {
 }
 
 /* Webbshop: kompakt rutnät och fällbara listor */
-.shop__grid[data-kompakt='true'] [data-extra] {
+/* Delar som bara fungerar med JavaScript visas via .js-klassen (sätts före första rendering), så att inget hoppar när skripten körs */
+.js .shop__grid[data-kompakt='true'] [data-extra] {
   display: none;
 }
 .shop__mer {
+  display: none;
   margin: var(--space-5) 0 0;
   text-align: center;
+}
+.js .shop__mer:not([hidden]) {
+  display: block;
+}
+.filter[data-filter] {
+  display: none;
+}
+.js .filter[data-filter] {
+  display: flex;
+}
+.js [data-guide-reserv] {
+  display: none;
 }
 .faldbar summary {
   display: inline-flex;
@@ -4060,8 +4074,11 @@ textarea.input {
 
 /* ---------- Foderguiden ---------- */
 .guide {
-  display: grid;
+  display: none;
   gap: var(--space-6);
+}
+.js .guide {
+  display: grid;
 }
 .guide[hidden],
 .guide [hidden] {
@@ -4272,4 +4289,92 @@ textarea.input {
 }
 [data-rorelse='lugn'] .marquee__list[aria-hidden='true'] {
   display: none;
+}
+
+/* ---------- Inladdningsvy (startsidan, en gång per besök) ---------- */
+.intro {
+  display: none;
+}
+html.intro-pa .intro {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  background-color: var(--black-950);
+  background-image: radial-gradient(55% 45% at 50% 46%, rgb(212 20 123 / 0.18), transparent 70%), var(--tassmonster);
+  background-size: auto, 320px;
+}
+.intro__in {
+  display: grid;
+  justify-items: center;
+  gap: var(--space-2);
+  padding: var(--space-5);
+}
+.intro__spar {
+  width: min(24rem, 80vw);
+  height: auto;
+  margin-bottom: var(--space-4);
+  overflow: visible;
+}
+.intro .paw {
+  fill: var(--pink-700);
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: intro-tass 0.5s var(--ease-out) calc(var(--i) * 0.14s + 0.05s) both;
+}
+.intro__namn {
+  margin: 0;
+  font: 500 clamp(2.25rem, 1.5rem + 3.4vw, 3.5rem) / 1.05 var(--font-display);
+  letter-spacing: -0.01em;
+  color: #fff;
+  animation: intro-text 0.7s var(--ease-out) 0.5s both;
+}
+.intro__ort {
+  margin: 0;
+  font: 700 0.8125rem/1.2 var(--font);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--pink-300);
+  animation: intro-text 0.7s var(--ease-out) 0.7s both;
+}
+html.intro-klar .intro {
+  animation: intro-ut 0.8s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+}
+@keyframes intro-tass {
+  from {
+    opacity: 0;
+    transform: scale(0.35) translateY(0.6rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes intro-text {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes intro-ut {
+  to {
+    transform: translateY(-100%);
+    visibility: hidden;
+  }
+}
+/* Sidans egna animationer (rubrikens ordintro, bannerlogons nedrullning m.m.) startar först när ridån lyfts */
+html.intro-pa:not(.intro-klar) body > :not(.intro),
+html.intro-pa:not(.intro-klar) body > :not(.intro) * {
+  animation-play-state: paused !important;
+}
+@media print {
+  .intro {
+    display: none !important;
+  }
 }

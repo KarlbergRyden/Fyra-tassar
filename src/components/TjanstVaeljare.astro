@@ -118,7 +118,7 @@ const { tjanster } = Astro.props;
                 {t.cta.text}
                 {t.cta.extern && <span class="sr-only"> (öppnas i ny flik)</span>}
               </a>
-              <a class="btn btn--light" href={t.merHref}>Läs mer</a>
+              <a class="btn btn--light" href={t.merHref}>Läs mer<span class="sr-only"> om {t.namn.toLowerCase()}</span></a>
             </div>
           </div>
         </div>

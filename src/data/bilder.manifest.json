@@ -21,6 +21,12 @@
       "kb": 27
     },
     {
+      "fil": "/images/hero-800.webp",
+      "bredd": 800,
+      "hojd": 450,
+      "kb": 39
+    },
+    {
       "fil": "/images/hero-1280.webp",
       "bredd": 1280,
       "hojd": 720,
