@@ -12,17 +12,17 @@ const kursepost = 'AnetteZim@hotmail.com';
 const rubrik = ['Hundkurser', 'för', 'dig', 'och', 'din', 'hund'];
 
 // Det kunden får – som glaskort i hjälten
+// Tre kort med allt som behövs. Det sista är en länk: frågor går till Anette.
 const kundFar = [
-  { ikon: 'cap', titel: 'En kurs', text: 'för dig och din hund' },
-  { ikon: 'facebook', titel: 'Enkel anmälan', text: 'i butiken eller via Facebook' },
-  { ikon: 'mail', titel: 'Svar på frågor', text: 'Anette besvarar frågor om kurserna' },
-  { ikon: 'parking', titel: 'Gratis parkering', text: 'direkt utanför butiken' },
+  { ikon: 'cap', titel: 'En kurs', text: 'för dig och din hund', href: undefined as string | undefined },
+  { ikon: 'facebook', titel: 'Enkel anmälan', text: 'i butiken eller via Facebook', href: undefined as string | undefined },
+  { ikon: 'mail', titel: 'Frågor?', text: 'Mejla Anette', href: `mailto:${kursepost}` },
 ];
 
 const mer = [
   { href: '/tjanster/kloklippning/', namn: 'Kloklippning', text: '160 kr' },
   { href: '/tjanster/hundfriskvard/', namn: 'Hundfriskvård', text: 'Nillans hundhälsa' },
-  { href: '/produkter/', namn: 'Produkter', text: 'Foder och tillbehör' },
+  { href: '/webbshop/', namn: 'Webbshop', text: 'Foder och tillbehör' },
 ];
 ---
 
@@ -52,12 +52,11 @@ const mer = [
               ))
             }
           </h1>
-          <p class="lead">Anmäl dig i butiken eller via Facebook.</p>
           <div class="btn-row">
             <a class="btn" href={facebook.url} target="_blank" rel="noopener noreferrer" data-spor="kurs-facebook"
               ><Icon namn="facebook" storlek={18} />Anmäl via Facebook<span class="sr-only"> (öppnas i ny flik)</span></a
             >
-            <a class="btn btn--light" href={site.telefon.href} data-spor="ring"><Icon namn="phone" storlek={18} />Ring butiken</a>
+            <a class="btn btn--light" href={site.telefon.href} data-spor="ring"><Icon namn="phone" storlek={18} />Ring {site.telefon.visning}</a>
           </div>
         </div>
 
@@ -65,56 +64,26 @@ const mer = [
           {
             kundFar.map((k, i) => (
               <li style={`--i:${i}`}>
-                <div class="glass-card glass-card--static">
-                  <span class="glass-card__icon"><Icon namn={k.ikon} storlek={22} /></span>
-                  <span>
-                    <strong>{k.titel}</strong>
-                    <small>{k.text}</small>
-                  </span>
-                </div>
+                {k.href ? (
+                  <a class="glass-card" href={k.href} data-spor="epost">
+                    <span class="glass-card__icon"><Icon namn={k.ikon} storlek={22} /></span>
+                    <span>
+                      <strong>{k.titel}</strong>
+                      <small>{k.text}</small>
+                    </span>
+                  </a>
+                ) : (
+                  <div class="glass-card glass-card--static">
+                    <span class="glass-card__icon"><Icon namn={k.ikon} storlek={22} /></span>
+                    <span>
+                      <strong>{k.titel}</strong>
+                      <small>{k.text}</small>
+                    </span>
+                  </div>
+                )}
               </li>
             ))
           }
-        </ul>
-      </div>
-    </section>
-
-    <!-- Anmälan: kompakt band under bilden -->
-    <section class="section--tight" aria-labelledby="anmalan-rubrik">
-      <div class="container signup">
-        <div data-reveal>
-          <p class="eyebrow">Anmälan</p>
-          <h2 id="anmalan-rubrik">Så anmäler du dig</h2>
-          <ol class="stage-steps stage-steps--rad">
-            <li>
-              <div>
-                <h3>Välj hur du anmäler dig</h3>
-                <p>Kom förbi butiken på {site.adress.gata} eller anmäl dig via Facebook.</p>
-              </div>
-            </li>
-            <li>
-              <div>
-                <h3>Fråga om du undrar något</h3>
-                <p>Anette svarar på frågor om kurserna.</p>
-              </div>
-            </li>
-          </ol>
-        </div>
-        <ul class="contact-list" data-reveal>
-          <li>
-            <span class="card__icon"><Icon namn="mail" storlek={20} /></span>
-            <span>
-              <a href={`mailto:${kursepost}`}>{kursepost}</a>
-              <small>Anette – frågor om kurserna</small>
-            </span>
-          </li>
-          <li>
-            <span class="card__icon"><Icon namn="phone" storlek={20} /></span>
-            <span>
-              <a href={site.telefon.href}>{site.telefon.visning}</a>
-              <small>Butiken</small>
-            </span>
-          </li>
         </ul>
       </div>
     </section>

@@ -30,7 +30,12 @@ export interface Tjanst {
   tidsatgang?: string;
   forberedelse?: string[];
   villkor?: string[];
-  utforare: { rubrik: string; text: string };
+  utforare: {
+    rubrik: string;
+    text: string;
+    /** Namn på personer i butiken (ur team.ts) som visas med porträtt */
+    personer?: string[];
+  };
   /** Tydlig primär handling */
   cta: Lank;
   /** Alternativ kontaktväg */
@@ -51,10 +56,9 @@ export const tjanster: Tjanst[] = [
       'Du slipper klippa klorna själv. Vi tar hand om det på en bokad tid, och du betalar redan när du bokar.',
     bild: 'rottweiler',
     kundFar: [
-      'En tid som är bokad åt dig, vanligtvis på tisdagseftermiddagar',
-      'Kloklippning av butikens egna kloklippare',
-      'Ett fast pris: 160 kr, betalt i förväg med Klarna',
-      'Gratis parkering direkt utanför',
+      'En tid som är bokad åt dig',
+      'Fast pris, betalt i förväg med Klarna',
+      'Tydliga villkor: avbokning senast 24 timmar innan',
     ],
     passarFor: [
       'Dig som vill ha hjälp med att klippa klor på ditt djur',
@@ -87,32 +91,12 @@ export const tjanster: Tjanst[] = [
     ],
     utforare: {
       rubrik: 'Vem klipper?',
-      text: 'Butikens kloklippare Wilma Andersson och Caroline Ohlsson.',
+      text: 'Butikens egna kloklippare.',
+      personer: ['Wilma Andersson', 'Caroline Ohlsson'],
     },
     cta: { text: 'Boka kloklippning', href: site.bokningUrl, extern: true },
     altKontakt: { text: `Ring ${site.telefon.visning}`, href: site.telefon.href },
-    faq: [
-      {
-        fraga: 'Vad kostar kloklippning?',
-        svar: 'Kloklippning kostar 160 kr. Du betalar med Klarna när du bokar tiden.',
-      },
-      {
-        fraga: 'Hur bokar jag?',
-        svar: 'Du bokar via vår sida på Bokadirekt. Välj en ledig tid och betala i samma steg.',
-      },
-      {
-        fraga: 'Hur avbokar jag?',
-        svar: `Bokad tid ska avbokas senast 24 timmar innan. Behöver du hjälp, ring oss på ${site.telefon.visning}.`,
-      },
-      {
-        fraga: 'Vad händer om jag inte kommer?',
-        svar: 'Uteblivna besök debiteras till 100 %.',
-      },
-      {
-        fraga: 'Vilka dagar finns tider?',
-        svar: 'Vanligtvis tisdagar ca 15.00–19.00, om inget annat anges. Lediga tider ser du i bokningen.',
-      },
-    ],
+    faq: [],
     relaterade: ['hundtrim', 'hundfriskvard'],
     seo: {
       title: 'Kloklippning i Borlänge – 160 kr, boka online',
@@ -161,24 +145,11 @@ export const tjanster: Tjanst[] = [
       text: 'Anna-Lena’s hundtrim. Bokning sker direkt med dem, inte via butiken.',
     },
     cta: {
-      text: 'Skicka sms för att boka',
+      text: 'Skicka sms till 072-308 05 00',
       href: 'sms:+46723080500',
     },
     altKontakt: { text: `Fråga butiken: ${site.telefon.visning}`, href: site.telefon.href },
-    faq: [
-      {
-        fraga: 'Hur bokar jag hundtrim?',
-        svar: 'Skicka ett sms till Anna-Lena’s hundtrim på 072-308 05 00 och skriv att det gäller Borlänge.',
-      },
-      {
-        fraga: 'Kan ni klippa katter?',
-        svar: 'Ja, kattklippning erbjuds också av Anna-Lena’s hundtrim.',
-      },
-      {
-        fraga: 'Vad kostar det?',
-        svar: 'Priset lämnas vid bokning. Fråga Anna-Lena’s hundtrim när du hör av dig.',
-      },
-    ],
+    faq: [],
     relaterade: ['kloklippning', 'hundfriskvard'],
     seo: {
       title: 'Hundtrim i Borlänge – boka via sms',
@@ -198,8 +169,6 @@ export const tjanster: Tjanst[] = [
     kundFar: [
       'Förebyggande friskvård och rehabilitering för din hund',
       'Massage, laser och elektroterapi',
-      'Behandling av en certifierad hundosteopat och diplomerad hundmassör',
-      'Du bokar direkt med Nillans hundhälsa',
     ],
     passarFor: [
       'Hundar som behöver förebyggande friskvård',
@@ -227,22 +196,13 @@ export const tjanster: Tjanst[] = [
       rubrik: 'Vem behandlar?',
       text: 'Gunilla, som driver Nillans hundhälsa. Hon är certifierad hundosteopat (fysioterapi för hundens muskler, skelett och leder), diplomerad hundmassör och har utökad djurvårdsutbildning.',
     },
-    cta: { text: 'Ring Nillans hundhälsa', href: 'tel:+46736981009' },
+    cta: { text: 'Ring 073-698 10 09', href: 'tel:+46736981009' },
     altKontakt: {
       text: 'Besök nillanshundhalsa.se',
       href: 'https://www.nillanshundhalsa.se',
       extern: true,
     },
-    faq: [
-      {
-        fraga: 'Vad innebär hundfriskvård?',
-        svar: 'Förebyggande friskvård och rehabilitering för hund, bland annat med massage, laser och elektroterapi.',
-      },
-      {
-        fraga: 'Hur bokar jag?',
-        svar: 'Kontakta Nillans hundhälsa direkt på 073-698 10 09 eller via nillanshundhalsa.se.',
-      },
-    ],
+    faq: [],
     relaterade: ['kloklippning', 'hundtrim'],
     seo: {
       title: 'Hundfriskvård och rehabilitering för hund',

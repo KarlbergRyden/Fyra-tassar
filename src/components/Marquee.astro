@@ -1,0 +1,20 @@
+---
+/** Långsamt rullande rad med märken. Pausas vid hover/fokus och står stilla vid reducerad rörelse. */
+import { fodermarken } from '../data/produkter';
+
+interface Props {
+  rubrik?: string;
+}
+const { rubrik = 'Foder från bland annat' } = Astro.props;
+---
+
+<div class="marquee" role="group" aria-label={rubrik}>
+  <div class="marquee__track">
+    <ul class="marquee__list">
+      {fodermarken.map((m) => <li>{m}</li>)}
+    </ul>
+    <ul class="marquee__list" aria-hidden="true">
+      {fodermarken.map((m) => <li>{m}</li>)}
+    </ul>
+  </div>
+</div>

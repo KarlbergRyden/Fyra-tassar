@@ -11,7 +11,7 @@ const aktiv = (href: string) => (href === '/' ? pathname === '/' : pathname.star
 <header class="site-header" data-header>
   <div class="container site-header__in">
     <a class="site-header__logo" href="/" aria-label={`${site.namn} – startsidan`}>
-      <Bild namn="logoBanner" alt="" sizes="(min-width: 40rem) 76px, 60px" prioritet />
+      <Bild namn="logoBanner" alt="" sizes="(min-width: 40rem) 76px, 60px" direkt />
     </a>
 
     <nav class="site-nav" aria-label="Huvudmeny">
@@ -44,6 +44,7 @@ const aktiv = (href: string) => (href === '/' ? pathname === '/' : pathname.star
       Boka kloklippning
     </a>
   </div>
+  <span class="scroll-progress" aria-hidden="true" data-progress></span>
 </header>
 
 <script>
@@ -57,8 +58,27 @@ const aktiv = (href: string) => (href === '/' ? pathname === '/' : pathname.star
     const glas = window.scrollY > 24 || toggle?.getAttribute('aria-expanded') === 'true';
     if (header) header.dataset.glass = String(glas);
   };
-  markera();
-  window.addEventListener('scroll', markera, { passive: true });
+  // Scroll-indikator: hur långt man kommit på sidan
+  const stapel = document.querySelector<HTMLElement>('[data-progress]');
+  let vantar = false;
+  const uppdatera = () => {
+    vantar = false;
+    markera();
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    stapel?.style.setProperty('--p', String(max > 0 ? Math.min(window.scrollY / max, 1) : 0));
+  };
+  // En enda lyssnare, högst en uppdatering per bildruta
+  window.addEventListener(
+    'scroll',
+    () => {
+      if (!vantar) {
+        vantar = true;
+        requestAnimationFrame(uppdatera);
+      }
+    },
+    { passive: true },
+  );
+  uppdatera();
 
   function satt(oppen: boolean) {
     if (!toggle || !nav) return;

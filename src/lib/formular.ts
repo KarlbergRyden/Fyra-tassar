@@ -53,9 +53,21 @@ export function reserveraLank(produkt: string): string {
   return `/kontakt/?${new URLSearchParams({ produkt }).toString()}#kontaktformular`;
 }
 
-/** Läser ?produkt=… ur adressen och föreslår ett meddelande. Returnerar null om ingen produkt anges. */
+/** Länk till kontaktformuläret med en färdigskriven fråga, t.ex. från foderguiden. */
+export function fragaLank(fraga: string): string {
+  return `/kontakt/?${new URLSearchParams({ fraga }).toString()}#kontaktformular`;
+}
+
+/**
+ * Läser ?produkt=… eller ?fraga=… ur adressen och föreslår ett meddelande.
+ * Returnerar null om inget av dem anges.
+ */
 export function forifyllMeddelande(search: string): string | null {
-  const produkt = (new URLSearchParams(search).get('produkt') ?? '').replace(/\s+/g, ' ').trim().slice(0, 120);
+  const param = new URLSearchParams(search);
+  const rensa = (v: string | null, max: number) => (v ?? '').replace(/\s+/g, ' ').trim().slice(0, max);
+  const fraga = rensa(param.get('fraga'), 400);
+  if (fraga) return `Hej! ${fraga}\n\n`;
+  const produkt = rensa(param.get('produkt'), 120);
   if (!produkt) return null;
   return `Hej! Jag vill fråga om eller reservera: ${produkt}.\n\n`;
 }

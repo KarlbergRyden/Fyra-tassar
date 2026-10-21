@@ -2,9 +2,10 @@
 import Icon from './Icon.astro';
 import Bild from './Bild.astro';
 import Oppettider from './Oppettider.astro';
-import { site, adressRad } from '../data/site';
+import { site, oppettiderMonSun } from '../data/site';
 import { tjanster } from '../data/tjanster';
 import { meny } from '../data/nav';
+import { oppettiderKompakt } from '../lib/oppettider';
 
 const ar = new Date().getFullYear();
 ---
@@ -16,7 +17,7 @@ const ar = new Date().getFullYear();
         <a class="footer__logo" href="/" aria-label={`${site.namn} – startsidan`}>
           <Bild namn="logo" alt="" sizes="120px" />
         </a>
-        <p>{site.slogan}. {site.beskrivning}</p>
+        <p>{site.slogan}.<span class="endast-desktop"> {site.beskrivning}</span></p>
         <ul class="socials" aria-label="Sociala medier">
           {
             site.sociala.map((s) => (
@@ -35,27 +36,31 @@ const ar = new Date().getFullYear();
         <address style="font-style: normal">
           <p>
             <strong>{site.namn}</strong><br />
-            {site.adress.gata}<br />
-            {site.adress.postnummer} {site.adress.ort}
+            {site.adress.gata}, {site.adress.postnummer} {site.adress.ort}
           </p>
           <p>
             <a href={site.telefon.href}>{site.telefon.visning}</a><br />
             <a href={`mailto:${site.epost}`}>{site.epost}</a>
           </p>
-          <p>{site.adress.beskrivning}</p>
+          <p class="endast-desktop">{site.adress.beskrivning}</p>
         </address>
       </div>
 
       <div>
         <h2>Öppettider</h2>
-        <Oppettider />
+        <Oppettider class="endast-desktop" />
+        <p class="endast-mobil footer__kompakt">{oppettiderKompakt(oppettiderMonSun)}</p>
       </div>
 
       <div>
         <h2>Meny</h2>
-        <ul>
+        <ul class="endast-desktop">
           {meny.map((m) => <li><a href={m.href}>{m.text}</a></li>)}
           {tjanster.map((t) => <li><a href={`/tjanster/${t.slug}/`}>{t.namn}</a></li>)}
+          <li><a href="/fragor-och-svar/">Frågor och svar</a></li>
+          <li><a href="/integritet/">Integritet och cookies</a></li>
+        </ul>
+        <ul class="endast-mobil footer__snabb">
           <li><a href="/fragor-och-svar/">Frågor och svar</a></li>
           <li><a href="/integritet/">Integritet och cookies</a></li>
         </ul>
@@ -67,7 +72,6 @@ const ar = new Date().getFullYear();
         © <span data-year>{ar}</span>
         {site.juridisktNamn}{site.organisationsnummer ? ` · Org.nr ${site.organisationsnummer}` : ''}
       </span>
-      <span>{adressRad}</span>
     </div>
   </div>
 </footer>

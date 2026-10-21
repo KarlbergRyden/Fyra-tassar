@@ -1,0 +1,27 @@
+---
+/** Gemensamt avslut på alla undersidor: en rad med en tydlig nästa handling. */
+import Icon from './Icon.astro';
+import { site } from '../data/site';
+
+interface Props {
+  rubrik?: string;
+  text?: string;
+}
+const {
+  rubrik = 'Frågor? Kom förbi eller hör av dig',
+  text = 'Vi svarar gärna på frågor om foder, tillbehör och våra tjänster.',
+} = Astro.props;
+---
+
+<section class="section--tight cta-slim" aria-labelledby="avslut-rubrik">
+  <div class="container cta-slim__in" data-reveal>
+    <div>
+      <h2 id="avslut-rubrik">{rubrik}</h2>
+      <p>{text}</p>
+    </div>
+    <div class="btn-row">
+      <a class="btn" href={site.telefon.href} data-spor="ring"><Icon namn="phone" storlek={18} />Ring {site.telefon.visning}</a>
+      <a class="btn btn--light" href="/kontakt/#oppettider">Hitta hit</a>
+    </div>
+  </div>
+</section>

@@ -1,9 +1,23 @@
 ---
+import { site } from '../data/site';
+
 interface Props {
   steg: { text: string; href?: string }[];
 }
 const { steg } = Astro.props;
 const alla = [{ text: 'Startsidan', href: '/' }, ...steg];
+
+// Strukturerad data så att sökmotorerna visar sidans plats i strukturen
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: alla.map((s, i) => ({
+    '@type': 'ListItem',
+    position: i + 1,
+    name: s.text,
+    item: new URL(s.href ?? Astro.url.pathname, site.url).href,
+  })),
+};
 ---
 
 <nav class="breadcrumbs" aria-label="Brödsmulor">
@@ -20,4 +34,5 @@ const alla = [{ text: 'Startsidan', href: '/' }, ...steg];
       ))
     }
   </ol>
+  <script type="application/ld+json" set:html={JSON.stringify(schema)} />
 </nav>

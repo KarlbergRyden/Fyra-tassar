@@ -4,6 +4,7 @@ import Icon from '../components/Icon.astro';
 import PageBanner from '../components/PageBanner.astro';
 import KontaktForm from '../components/KontaktForm.astro';
 import Oppettider from '../components/Oppettider.astro';
+import Fotoband from '../components/Fotoband.astro';
 import OppetNu from '../components/OppetNu.astro';
 import { site } from '../data/site';
 ---
@@ -24,19 +25,19 @@ import { site } from '../data/site';
     <section class="section--tight" aria-label="Snabbkontakt">
       <div class="container">
         <ul class="quick" data-reveal-stagger>
-          <li class="quick__kort" data-spot>
+          <li class="quick__kort" data-tilt>
             <span class="quick__ikon"><Icon namn="phone" storlek={24} /></span>
             <span class="quick__etikett">Ring oss</span>
             <a class="quick__varde" href={site.telefon.href} data-spor="ring">{site.telefon.visning}</a>
             <button class="quick__kopiera" type="button" data-kopiera={site.telefon.visning} hidden>Kopiera</button>
           </li>
-          <li class="quick__kort" data-spot>
+          <li class="quick__kort" data-tilt>
             <span class="quick__ikon"><Icon namn="mail" storlek={24} /></span>
             <span class="quick__etikett">Mejla oss</span>
             <a class="quick__varde" href={`mailto:${site.epost}`} data-spor="epost">{site.epost}</a>
             <button class="quick__kopiera" type="button" data-kopiera={site.epost} hidden>Kopiera</button>
           </li>
-          <li class="quick__kort" data-spot>
+          <li class="quick__kort" data-tilt>
             <span class="quick__ikon"><Icon namn="pin" storlek={24} /></span>
             <span class="quick__etikett">Besök butiken</span>
             <a class="quick__varde" href={site.adress.kartaUrl} target="_blank" rel="noopener noreferrer" data-spor="karta"
@@ -48,6 +49,8 @@ import { site } from '../data/site';
         <p class="sr-only" role="status" data-kopierat></p>
       </div>
     </section>
+
+    <Fotoband id="fasad" etikett="Butiken" rubrik="Det här letar du efter" />
 
     <section class="section">
       <div class="container">
@@ -70,11 +73,7 @@ import { site } from '../data/site';
 
             <section class="info-card" aria-labelledby="hitta-rubrik" data-reveal>
               <h2 id="hitta-rubrik">Hitta hit</h2>
-              <p class="mb-0">
-                <strong>{site.namn}</strong><br />
-                {site.adress.gata}, {site.adress.postnummer} {site.adress.ort}
-              </p>
-              <p class="text-soft mb-0">{site.adress.beskrivning}</p>
+              <p class="mb-0">{site.adress.beskrivning}</p>
               <div class="btn-row">
                 <a class="btn" href={site.adress.kartaUrl} target="_blank" rel="noopener noreferrer" data-spor="karta"
                   ><Icon namn="pin" storlek={18} />Öppna i kartor<span class="sr-only"> (öppnas i ny flik)</span></a

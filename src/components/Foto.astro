@@ -1,0 +1,32 @@
+---
+/** Foto från en fotoplats (src/data/foton.ts). Visar ingenting om bilden ännu inte finns. */
+import { altFor, foto } from '../data/foton';
+
+interface Props {
+  id: string;
+  alt?: string;
+  sizes?: string;
+  /** Vilken del av bilden som ska synas vid beskärning, t.ex. "50% 30%" */
+  fokus?: string;
+  class?: string;
+}
+const { id, alt = altFor(id), sizes = '100vw', fokus, class: klass } = Astro.props;
+const f = foto(id);
+---
+
+{
+  f && (
+    <img
+      class={klass}
+      src={f.src}
+      srcset={f.srcset}
+      sizes={sizes}
+      width={f.width}
+      height={f.height}
+      alt={alt}
+      loading="lazy"
+      decoding="async"
+      style={fokus ? `object-position:${fokus}` : undefined}
+    />
+  )
+}

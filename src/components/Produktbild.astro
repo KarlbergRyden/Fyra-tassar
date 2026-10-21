@@ -1,0 +1,53 @@
+---
+/**
+ * Linjeillustration som platshållare för produktbild. Byts mot riktigt foto via `bild` i
+ * src/data/webbshop.ts när fotografier finns. Dekorativ (aria-hidden); produktnamnet står i kortet.
+ */
+import type { ProduktTyp } from '../data/webbshop';
+
+interface Props {
+  typ: ProduktTyp;
+}
+const { typ } = Astro.props;
+
+const tass =
+  '<ellipse cx="6.5" cy="11" rx="2" ry="2.6"/><ellipse cx="10" cy="6.5" rx="2" ry="2.6"/><ellipse cx="14" cy="6.5" rx="2" ry="2.6"/><ellipse cx="17.5" cy="11" rx="2" ry="2.6"/><path d="M12 12.5c-2.6 0-5.5 2.8-5.5 5.2 0 1.7 1.4 2.3 2.6 2.3 1 0 1.7-.5 2.9-.5s1.9.5 2.9.5c1.2 0 2.6-.6 2.6-2.3 0-2.4-2.9-5.2-5.5-5.2z"/>';
+const litenTass = (x: number, y: number, s = 1) =>
+  `<g transform="translate(${x} ${y}) scale(${s}) translate(-12 -12)" stroke-width="${(2.2 / s).toFixed(2)}">${tass}</g>`;
+
+const former: Record<ProduktTyp, string> = {
+  foder:
+    '<path d="M30 26h36l6 12v38a8 8 0 0 1-8 8H32a8 8 0 0 1-8-8V38z"/><path d="M24 38h48"/><path d="M40 26l3-9h10l3 9"/>' +
+    litenTass(48, 62, 1.5),
+  koppel: '<circle cx="32" cy="32" r="14"/><path d="M42 42c10 9 14 14 24 24"/><circle cx="70" cy="70" r="6"/>',
+  halsband:
+    '<ellipse cx="48" cy="44" rx="30" ry="16"/><ellipse cx="48" cy="44" rx="22" ry="9"/><path d="M48 60v6"/><circle cx="48" cy="73" r="7"/>',
+  sele: '<path d="M36 30c0-12 24-12 24 0"/><path d="M30 30v42M66 30v42"/><path d="M30 44h36M30 62h36"/><circle cx="48" cy="44" r="4"/><path d="M26 30h10M60 30h10"/>',
+  sang: '<path d="M16 58a10 10 0 0 1 10-10h44a10 10 0 0 1 10 10v12a8 8 0 0 1-8 8H24a8 8 0 0 1-8-8z"/><path d="M24 48c0-12 8-18 24-18s24 6 24 18"/><path d="M28 62h40"/>',
+  leksak:
+    '<path d="M35 61l26-26"/><circle cx="29" cy="57" r="6"/><circle cx="37" cy="69" r="6"/><circle cx="59" cy="27" r="6"/><circle cx="67" cy="39" r="6"/>',
+  godis: '<rect x="20" y="30" width="56" height="38" rx="19"/>' + litenTass(48, 49, 1.4),
+  palsvard:
+    '<rect x="20" y="24" width="56" height="26" rx="9"/><path d="M30 50v12M42 50v12M54 50v12M66 50v12"/><path d="M34 37h28"/>',
+  kattsand:
+    '<path d="M16 50h64v22a8 8 0 0 1-8 8H24a8 8 0 0 1-8-8z"/><path d="M12 50h72"/><path d="M28 62h.01M40 68h.01M54 62h.01M66 68h.01"/>',
+  klostrad:
+    '<path d="M22 82h52"/><rect x="42" y="32" width="12" height="50" rx="2"/><path d="M26 32h44"/><path d="M30 32l4-9h28l4 9"/><path d="M70 32v16"/><circle cx="70" cy="54" r="6"/>',
+  skal: '<path d="M18 46h60c0 20-12 32-30 32S18 66 18 46z"/><path d="M14 46h68"/><path d="M34 38h.01M46 33h.01M58 38h.01"/>',
+};
+
+const inre = former[typ] ?? litenTass(48, 48, 3);
+---
+
+<svg
+  class="produktbild"
+  viewBox="0 0 96 96"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2.2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden="true"
+  focusable="false"
+  set:html={inre}
+/>

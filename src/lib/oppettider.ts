@@ -109,3 +109,28 @@ export function oppettiderSchema(oppettider: readonly Oppettid[]) {
       closes: o.stanger,
     }));
 }
+
+const DAGKORT: Record<number, string> = { 0: 'Sön', 1: 'Mån', 2: 'Tis', 3: 'Ons', 4: 'Tor', 5: 'Fre', 6: 'Lör' };
+const kortTid = (t: string) => (t.endsWith(':00') ? String(Number(t.slice(0, 2))) : `${Number(t.slice(0, 2))}.${t.slice(3)}`);
+
+/**
+ * Öppettider på en rad, med sammanhängande dagar med samma tider ihopslagna.
+ * Förväntar dagarna i ordningen måndag–söndag. Ex: "Mån 10–18 · Tis 10–19 · Ons–fre 10–18 · Lör 10–15 · Sön stängt"
+ */
+export function oppettiderKompakt(dagar: readonly Oppettid[]): string {
+  const grupper: { dagar: Oppettid[]; text: string }[] = [];
+  for (const d of dagar) {
+    const text = d.oppnar && d.stanger ? `${kortTid(d.oppnar)}–${kortTid(d.stanger)}` : 'stängt';
+    const sista = grupper[grupper.length - 1];
+    if (sista && sista.text === text) sista.dagar.push(d);
+    else grupper.push({ dagar: [d], text });
+  }
+  return grupper
+    .map((g) => {
+      const forsta = DAGKORT[g.dagar[0].dag];
+      const sista = DAGKORT[g.dagar[g.dagar.length - 1].dag];
+      const etikett = g.dagar.length === 1 ? forsta : `${forsta}–${sista.toLowerCase()}`;
+      return `${etikett} ${g.text}`;
+    })
+    .join(' · ');
+}

@@ -1,7 +1,7 @@
 /** Huvudmeny – en rad per sida, ingen dubblering. Följer originalets ordning (Hem först). */
 export const meny = [
   { text: 'Hem', href: '/' },
-  { text: 'Produkter', href: '/produkter/' },
+  { text: 'Webbshop', href: '/webbshop/' },
   { text: 'Tjänster', href: '/tjanster/' },
   { text: 'Kurser', href: '/kurser/' },
   { text: 'Priser', href: '/priser/' },

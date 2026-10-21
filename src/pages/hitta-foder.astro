@@ -1,0 +1,174 @@
+---
+import Bas from '../layouts/Bas.astro';
+import Icon from '../components/Icon.astro';
+import PageBanner from '../components/PageBanner.astro';
+import Avslut from '../components/Avslut.astro';
+import { alderText, behovLista } from '../lib/foderhjalp';
+import { aktivaErbjudanden } from '../data/erbjudanden';
+import { site } from '../data/site';
+
+const harKampanjer = aktivaErbjudanden().length > 0;
+const alder = Object.keys(alderText.hund) as (keyof typeof alderText.hund)[];
+const alderEtikett = {
+  ung: ['Valp eller unghund', 'Kattunge'],
+  vuxen: ['Vuxen', 'Vuxen'],
+  senior: ['Äldre', 'Äldre'],
+  'vet-inte': ['Vet inte', 'Vet inte'],
+} as const;
+---
+
+<Bas
+  title="Hitta rätt foder till hund och katt"
+  description="Osäker på vilket foder som passar din hund eller katt? Svara på några frågor så får du hjälp av personalen på Fyra Tassar i Borlänge."
+>
+  <div class="page-dark">
+    <PageBanner
+      titel="Hitta rätt foder"
+      ingress="Svara på några korta frågor. Du får en färdig fråga att skicka till butiken, där vi hjälper dig att välja."
+      steg={[{ text: 'Hitta rätt foder' }]}
+      etikett="Foderhjälp"
+    />
+
+    <section class="section" aria-labelledby="guide-rubrik">
+      <div class="container container--narrow">
+        <h2 id="guide-rubrik" class="sr-only">Frågor om ditt djur</h2>
+
+        <div class="guide" data-guide hidden>
+          <fieldset class="guide__steg" data-reveal>
+            <legend><span class="guide__nr">1</span>Vem ska äta?</legend>
+            <div class="val-rad">
+              <label class="val"><input type="radio" name="djur" value="hund" /><span>Hund</span></label>
+              <label class="val"><input type="radio" name="djur" value="katt" /><span>Katt</span></label>
+            </div>
+          </fieldset>
+
+          <fieldset class="guide__steg" data-reveal>
+            <legend><span class="guide__nr">2</span>Hur gammalt är djuret?</legend>
+            <div class="val-rad">
+              {
+                alder.map((a) => (
+                  <label class="val">
+                    <input type="radio" name="alder" value={a} />
+                    <span>
+                      <span data-alder-hund={a}>{alderEtikett[a][0]}</span>
+                      <span data-alder-katt={a} hidden>{alderEtikett[a][1]}</span>
+                    </span>
+                  </label>
+                ))
+              }
+            </div>
+          </fieldset>
+
+          <fieldset class="guide__steg" data-reveal>
+            <legend><span class="guide__nr">3</span>Något särskilt vi bör veta? <small>(valfritt)</small></legend>
+            <div class="val-rad">
+              {
+                behovLista.map((b) => (
+                  <label class="val">
+                    <input type="checkbox" name="behov" value={b.id} />
+                    <span>{b.text.charAt(0).toUpperCase() + b.text.slice(1)}</span>
+                  </label>
+                ))
+              }
+            </div>
+          </fieldset>
+
+          <div class="guide__steg" data-reveal>
+            <label class="guide__etikett" for="nuvarande"><span class="guide__nr">4</span>Vad äter djuret idag? <small>(valfritt)</small></label>
+            <input class="input" id="nuvarande" name="nuvarande" type="text" maxlength="80" autocomplete="off" />
+          </div>
+
+          <div class="guide__resultat" data-resultat aria-live="polite" hidden>
+            <p class="eyebrow"><Icon namn="message" storlek={18} />Din fråga till oss</p>
+            <blockquote data-fraga></blockquote>
+            <div class="btn-row">
+              <a class="btn" href="/kontakt/#kontaktformular" data-fraga-lank data-spor="foderhjalp-skicka">
+                Skicka frågan till butiken
+              </a>
+              <a class="btn btn--light" href={site.telefon.href} data-spor="ring">
+                <Icon namn="phone" storlek={18} />Ring {site.telefon.visning}
+              </a>
+            </div>
+            <p class="text-soft mb-0">Du kan läsa och ändra texten innan du skickar. Vi rekommenderar inget foder här, utan hjälper dig i butiken.</p>
+          </div>
+
+          <p class="guide__hjalp text-soft" data-guide-hjalp>Välj djur och ålder så skriver vi frågan åt dig.</p>
+        </div>
+
+        <div class="card" data-guide-reserv>
+          <h3>Fråga oss direkt</h3>
+          <p>Berätta om ditt djur så hjälper vi dig att hitta rätt foder.</p>
+          <div class="btn-row">
+            <a class="btn" href="/kontakt/#kontaktformular">Skicka en fråga</a>
+            <a class="btn btn--light" href={site.telefon.href} data-spor="ring"><Icon namn="phone" storlek={18} />Ring {site.telefon.visning}</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section--tint" aria-labelledby="hjalp-rubrik">
+      <div class="container container--narrow">
+        <h2 id="hjalp-rubrik" data-reveal>Så hjälper vi dig i butiken</h2>
+        <ul class="checklist" data-reveal-stagger>
+          <li><Icon namn="check" storlek={22} /><span>Butiksägaren har utbildning i foderlära och 20 års erfarenhet av djurbutik.</span></li>
+          <li><Icon namn="check" storlek={22} /><span>Saknar vi det du söker beställer vi hem det, om det går.</span></li>
+          <li>
+            <Icon namn="check" storlek={22} />
+            <span>
+              Se vilka <a href="/webbshop/#marken">fodermärken</a> vi har{
+                harKampanjer && (
+                  <>
+                    {' '}och vilka <a href="/erbjudanden/">foderkampanjer</a> som pågår
+                  </>
+                )
+              }.
+            </span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <Avslut rubrik="Hellre prata med någon?" text="Ring eller kom förbi, så hjälper vi dig att välja foder." />
+  </div>
+</Bas>
+
+<script>
+  import { byggFoderfraga, behovLista, type Alder, type BehovId, type Djur } from '../lib/foderhjalp';
+  import { fragaLank } from '../lib/formular';
+
+  const guide = document.querySelector<HTMLElement>('[data-guide]');
+  if (guide) {
+    guide.hidden = false;
+    document.querySelector<HTMLElement>('[data-guide-reserv]')!.hidden = true;
+
+    const resultat = guide.querySelector<HTMLElement>('[data-resultat]')!;
+    const fraga = guide.querySelector<HTMLElement>('[data-fraga]')!;
+    const lank = guide.querySelector<HTMLAnchorElement>('[data-fraga-lank]')!;
+    const hjalp = guide.querySelector<HTMLElement>('[data-guide-hjalp]')!;
+    const nuvarande = guide.querySelector<HTMLInputElement>('#nuvarande')!;
+    const giltigaBehov = new Set<string>(behovLista.map((b) => b.id));
+
+    const uppdatera = () => {
+      const djur = guide.querySelector<HTMLInputElement>('input[name="djur"]:checked')?.value as Djur | undefined;
+      const alder = guide.querySelector<HTMLInputElement>('input[name="alder"]:checked')?.value as Alder | undefined;
+      // Åldersalternativen får rätt ord för valpar eller kattungar
+      guide.querySelectorAll<HTMLElement>('[data-alder-hund]').forEach((e) => (e.hidden = djur === 'katt'));
+      guide.querySelectorAll<HTMLElement>('[data-alder-katt]').forEach((e) => (e.hidden = djur !== 'katt'));
+
+      const klart = Boolean(djur && alder);
+      resultat.hidden = !klart;
+      hjalp.hidden = klart;
+      if (!djur || !alder) return;
+      const behov = [...guide.querySelectorAll<HTMLInputElement>('input[name="behov"]:checked')]
+        .map((i) => i.value)
+        .filter((v): v is BehovId => giltigaBehov.has(v));
+      const text = byggFoderfraga({ djur, alder, behov, nuvarande: nuvarande.value });
+      fraga.textContent = text;
+      lank.href = fragaLank(text);
+    };
+
+    guide.addEventListener('change', uppdatera);
+    nuvarande.addEventListener('input', uppdatera);
+    uppdatera();
+  }
+</script>

@@ -1,0 +1,23 @@
+---
+/** Porträtt av en person, eller initialer tills ett foto finns. */
+import Foto from './Foto.astro';
+import { foto } from '../data/foton';
+
+interface Props {
+  namn: string;
+  /** Fotoplatsens id, t.ex. "wilma" */
+  fotoId?: string;
+  storlek?: 'normal' | 'liten';
+}
+const { namn, fotoId, storlek = 'normal' } = Astro.props;
+const harFoto = Boolean(fotoId && foto(fotoId));
+const initialer = namn
+  .split(' ')
+  .map((d) => d[0])
+  .join('')
+  .slice(0, 2);
+---
+
+<span class:list={['avatar', storlek === 'liten' && 'avatar--liten', harFoto && 'avatar--foto']} aria-hidden={harFoto ? undefined : 'true'}>
+  {harFoto ? <Foto id={fotoId!} alt={namn} sizes="120px" fokus="50% 25%" /> : initialer}
+</span>

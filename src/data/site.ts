@@ -38,6 +38,7 @@ export const site = {
     gata: 'Hantverkargatan 5',
     postnummer: '781 71',
     ort: 'Borlänge',
+    vagbeskrivning: 'Samma hus som gamla Dollarstore, bredvid Procurator.',
     beskrivning: 'Samma hus som gamla Dollarstore, bredvid Procurator. Gratis parkering direkt utanför.',
     kartaUrl:
       'https://www.google.com/maps/search/?api=1&query=Hantverkargatan+5%2C+781+71+Borl%C3%A4nge',
@@ -47,13 +48,13 @@ export const site = {
   epost: 'info@fyratassar.nu',
 
   /** Bokningssida för kloklippning */
-  bokningUrl: 'https://www.bokadirekt.se/places/fyra-tassar-i-borl%C3%A4nge-ab-37451',
+  bokningUrl: 'https://www.bokadirekt.se/places/fyra-tassar-i-borlange-ab-37451',
 
   sociala: [
     {
       namn: 'Facebook',
       ikon: 'facebook',
-      url: 'https://www.facebook.com/Fyra-Tassar-354727361337995',
+      url: 'https://www.facebook.com/people/Fyra-Tassar/100063704989622/',
     },
     {
       namn: 'Instagram',
@@ -82,7 +83,31 @@ export const site = {
   formularEndpoint: (import.meta.env.PUBLIC_FORM_ENDPOINT as string | undefined) ?? '',
   /** Valfri publik åtkomstnyckel som vissa formulärtjänster (t.ex. Web3Forms) kräver i anropet. */
   formularNyckel: (import.meta.env.PUBLIC_FORM_ACCESS_KEY as string | undefined) ?? '',
+
+  /**
+   * Hur mycket sidan rör sig. 'lugn': rubrikens ordintro, sidövergångar och mjuk inglidning.
+   * 'full': dessutom tassspår, rullande märkesrad, uppräkning av siffror, lutande kort och magnetknappar.
+   */
+  rorelse: 'lugn' as 'lugn' | 'full',
+
+  /**
+   * Kakfri besöksstatistik (valfri). Sätt PUBLIC_PLAUSIBLE_DOMAIN eller PUBLIC_GOATCOUNTER (se README).
+   * Utan dem laddas ingen mätning alls.
+   */
+  analys: {
+    plausibleDomain: (import.meta.env.PUBLIC_PLAUSIBLE_DOMAIN as string | undefined) ?? '',
+    plausibleSkript:
+      (import.meta.env.PUBLIC_PLAUSIBLE_SCRIPT as string | undefined) || 'https://plausible.io/js/script.js',
+    goatcounter: (import.meta.env.PUBLIC_GOATCOUNTER as string | undefined) ?? '',
+  },
 } as const;
+
+/** Vilken statistiktjänst som är påslagen (null = ingen). */
+export const analysTjanst: 'Plausible' | 'GoatCounter' | null = site.analys.plausibleDomain
+  ? 'Plausible'
+  : site.analys.goatcounter
+    ? 'GoatCounter'
+    : null;
 
 /** Veckodagsordning som visas för besökare: måndag–söndag. */
 export const oppettiderMonSun = [...site.oppettider].sort(

@@ -3,27 +3,38 @@ import Bas from '../layouts/Bas.astro';
 import Icon from '../components/Icon.astro';
 import Bild from '../components/Bild.astro';
 import OppetNu from '../components/OppetNu.astro';
-import Oppettider from '../components/Oppettider.astro';
 import Faq from '../components/Faq.astro';
-import SlutCta from '../components/SlutCta.astro';
 import Omdomen from '../components/Omdomen.astro';
+import Tal from '../components/Tal.astro';
+import Tassspar from '../components/Tassspar.astro';
+import Marquee from '../components/Marquee.astro';
+import Fotoband from '../components/Fotoband.astro';
 import { site, adressRad } from '../data/site';
 import { hittaTjanst } from '../data/tjanster';
 import { aktivaErbjudanden } from '../data/erbjudanden';
+import { webbshopOppen } from '../data/webbshop';
 import { faq } from '../data/faq';
 
 const klo = hittaTjanst('kloklippning')!;
-const erbjudanden = aktivaErbjudanden();
+const erbjudanden = aktivaErbjudanden().slice(0, 3);
 const startFaq = faq.filter((f) => f.startsida);
+
+// Huvudknappen leder dit kunden kan agera nu: webbshopen när den är öppen, annars kampanjerna, annars bokning
+const huvudval = webbshopOppen()
+  ? { text: 'Till webbshopen', href: '/webbshop/', spor: 'hero-webbshop' }
+  : aktivaErbjudanden().length > 0
+    ? { text: 'Se kampanjerna', href: '/erbjudanden/', spor: 'hero-kampanjer' }
+    : { text: 'Boka kloklippning', href: site.bokningUrl, spor: 'hero-boka' };
 
 // Rubriken delas upp i ord som glider in ett i taget
 const rubrik = [{ t: 'Allt' }, { t: 'till' }, { t: 'din' }, { t: 'hund' }, { t: 'och' }, { t: 'katt' }];
 
+// Snabbval i hjälten: bara namn. Pris och detaljer finns i tjänstelistan längre ned.
 const glasKort = [
-  { ikon: 'scissors', namn: 'Kloklippning', text: '160 kr · boka online', href: '/tjanster/kloklippning/' },
-  { ikon: 'paw', namn: 'Hundtrim', text: 'Även kattklippning', href: '/tjanster/hundtrim/' },
-  { ikon: 'heart', namn: 'Hundfriskvård', text: 'Massage, laser, elektroterapi', href: '/tjanster/hundfriskvard/' },
-  { ikon: 'cap', namn: 'Hundkurser', text: 'Anmäl i butiken', href: '/kurser/' },
+  { ikon: 'scissors', namn: 'Kloklippning', href: '/tjanster/kloklippning/' },
+  { ikon: 'paw', namn: 'Hundtrim', href: '/tjanster/hundtrim/' },
+  { ikon: 'heart', namn: 'Hundfriskvård', href: '/tjanster/hundfriskvard/' },
+  { ikon: 'cap', namn: 'Hundkurser', href: '/kurser/' },
 ];
 
 // 1. Sortiment: två vägar in, hund eller katt
@@ -52,10 +63,9 @@ const tjanstRader = [
   { nr: '04', namn: 'Hundkurser', text: 'Anmälan i butiken eller via Facebook.', meta: 'Butiken', href: '/kurser/', boka: false },
 ];
 
-// 3. Varför: fyra konkreta fakta
+// 3. Varför: tre konkreta fakta (övrigt står på sin egen sida)
 const fakta = [
-  { stor: '20 år', text: 'i djurbutik. Butiksägaren har även utbildning i foderlära.' },
-  { stor: 'Vi beställer hem', text: 'det vi inte har i butiken, om det går.' },
+  { stor: '20 år', tal: 20, enhet: 'år', text: 'i djurbutik. Butiksägaren har även utbildning i foderlära.' },
   { stor: 'Hos tillverkarna', text: 'Personalen har besökt Fourfriends i Prag och Profines tillverkning.' },
   { stor: 'Gratis parkering', text: 'direkt utanför butiken.' },
 ];
@@ -91,8 +101,8 @@ const fakta = [
           Foder och tillbehör, kloklippning, hundtrim och hundkurser.
         </p>
         <div class="btn-row">
-          <a class="btn" href="/produkter/" data-spor="hero-produkter">Se sortimentet</a>
-          <a class="btn btn--light" href={site.bokningUrl} rel="noopener" data-spor="hero-boka">Boka kloklippning</a>
+          <a class="btn" href={huvudval.href} data-spor={huvudval.spor}>{huvudval.text}</a>
+          <a class="btn btn--light" href="#tjanster" data-spor="hero-tjanster">Se tjänsterna</a>
         </div>
       </div>
 
@@ -104,7 +114,6 @@ const fakta = [
                 <span class="glass-card__icon"><Icon namn={k.ikon} storlek={22} /></span>
                 <span>
                   <strong>{k.namn}</strong>
-                  <small>{k.text}</small>
                 </span>
               </a>
             </li>
@@ -120,7 +129,6 @@ const fakta = [
         <li><Icon namn="pin" storlek={20} /> {adressRad}</li>
         <li><Icon namn="clock" storlek={20} /> <OppetNu /></li>
         <li><Icon namn="phone" storlek={20} /> <a href={site.telefon.href} data-spor="ring">{site.telefon.visning}</a></li>
-        <li><Icon namn="parking" storlek={20} /> Gratis parkering</li>
       </ul>
     </div>
   </div>
@@ -139,7 +147,7 @@ const fakta = [
       <div class="photo-cards" data-reveal-stagger>
         {
           sortiment.map((s) => (
-            <a class="photo-card" href={`/produkter/#${s.id}`}>
+            <a class="photo-card" data-tilt href={`/webbshop/#${s.id}`}>
               <Bild namn={s.bild} alt={s.alt} sizes="(min-width: 48rem) 50vw, 100vw" />
               <span class="photo-card__body">
                 <h3>{s.namn}</h3>
@@ -150,8 +158,13 @@ const fakta = [
           ))
         }
       </div>
+      <div class="mt-6" data-reveal>
+        <Marquee />
+      </div>
     </div>
   </section>
+
+  <Tassspar />
 
   <!-- ================= 2. TJÄNSTER: välj och boka ================= -->
   <section class="section section--tint" id="tjanster" aria-labelledby="tjanster-rubrik">
@@ -198,10 +211,17 @@ const fakta = [
         </div>
       </div>
       <ul class="facts" data-reveal-stagger>
-        {fakta.map((f) => <li><strong>{f.stor}</strong><p>{f.text}</p></li>)}
+        {fakta.map((f) => (
+          <li>
+            <strong>{f.tal ? <><Tal varde={f.tal} /> {f.enhet}</> : f.stor}</strong>
+            <p>{f.text}</p>
+          </li>
+        ))}
       </ul>
     </div>
   </section>
+
+  <Tassspar />
 
   <!-- Omdömen: visas bara när riktiga omdömen finns i src/data/omdomen.ts -->
   <Omdomen />
@@ -215,7 +235,10 @@ const fakta = [
             <p class="eyebrow">Erbjudanden</p>
             <h2 id="erbj-rubrik">Foderkampanjer just nu</h2>
             <p class="lead">Kampanjpriser på torrfoder till hund och katt, i butiken.</p>
-            <p class="mt-5"><a class="btn" href="/erbjudanden/">Se alla erbjudanden</a></p>
+            <div class="btn-row mt-5">
+              <a class="btn" href="/erbjudanden/">Se alla erbjudanden</a>
+              <a class="btn btn--light" href="/hitta-foder/" data-spor="passar-foderhjalp">Hitta rätt foder</a>
+            </div>
           </div>
           <ul class="price-list" data-reveal-stagger>
             {
@@ -242,25 +265,20 @@ const fakta = [
     )
   }
 
+  <Fotoband id="interior" etikett="Butiken" rubrik="Kom in och titta" />
+
   <!-- ================= 5. BESÖK OSS: öppettider, adress, frågor ================= -->
   <section class="section" aria-labelledby="besok-rubrik">
     <div class="container visit">
       <div data-reveal>
         <p class="eyebrow">Besök oss</p>
         <h2 id="besok-rubrik">Välkommen in</h2>
-        <p class="lead">
-          {site.adress.gata}, {site.adress.postnummer} {site.adress.ort}. {site.adress.beskrivning}
-        </p>
-        <div class="hours-card">
-          <h3>Öppettider</h3>
-          <OppetNu />
-          <Oppettider />
-        </div>
+        <p class="lead">{adressRad}. {site.adress.vagbeskrivning}</p>
         <div class="btn-row mt-5">
           <a class="btn" href={site.adress.kartaUrl} target="_blank" rel="noopener noreferrer" data-spor="karta"
             ><Icon namn="pin" storlek={18} />Hitta hit<span class="sr-only"> (öppnas i ny flik)</span></a
           >
-          <a class="btn btn--light" href={site.telefon.href} data-spor="ring"><Icon namn="phone" storlek={18} />Ring {site.telefon.visning}</a>
+          <a class="btn btn--light" href="/kontakt/#oppettider">Se öppettider</a>
         </div>
       </div>
       <div data-reveal>
@@ -274,7 +292,6 @@ const fakta = [
     </div>
   </section>
 
-  <SlutCta />
   </div>
 </Bas>
 

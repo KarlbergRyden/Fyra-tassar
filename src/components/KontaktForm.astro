@@ -10,6 +10,10 @@ const endpoint = site.formularEndpoint;
 
 <div class="form-wrap" data-form-wrap data-epost={site.epost} data-endpoint={endpoint} data-nyckel={site.formularNyckel}>
   <div class="alert alert--ok" role="status" tabindex="-1" data-ok hidden>
+    <svg class="ok-check" viewBox="0 0 52 52" aria-hidden="true" focusable="false" fill="none">
+      <circle cx="26" cy="26" r="23" />
+      <path d="M14 27l8 8 16-16" />
+    </svg>
     <h3 data-ok-rubrik>Tack för ditt meddelande!</h3>
     <p data-ok-text>
       Vi läser det och svarar dig via e-post eller telefon. Behöver du hjälp snabbare kan du ringa oss på
@@ -134,6 +138,7 @@ const endpoint = site.formularEndpoint;
 </div>
 
 <script>
+  import { spara } from '../lib/spar';
   import { byggMailto, forifyllMeddelande, validera, type FaltNamn, type Formularvarden } from '../lib/formular';
 
   const wrap = document.querySelector<HTMLElement>('[data-form-wrap]');
@@ -222,7 +227,8 @@ const endpoint = site.formularEndpoint;
       }
     }
 
-    function lyckat(tex?: string) {
+    function lyckat(tex?: string, handelse = 'formular-skickat') {
+      if (handelse) spara(handelse);
       form!.hidden = true;
       serverfel.hidden = true;
       if (tex) okText.innerHTML = tex;
@@ -243,7 +249,7 @@ const endpoint = site.formularEndpoint;
 
       // Skräpskydd: låtsas lyckas
       if ((form.elements.namedItem('webbplats') as HTMLInputElement).value) {
-        lyckat();
+        lyckat(undefined, ''); // skräp räknas inte som en händelse
         return;
       }
 
@@ -252,6 +258,7 @@ const endpoint = site.formularEndpoint;
         window.location.href = byggMailto(epost, v);
         lyckat(
           `Ditt e-postprogram ska nu öppnas med meddelandet ifyllt. Tryck på <strong>Skicka</strong> där så når det oss. Öppnades inget? Mejla <a href="mailto:${epost}">${epost}</a> direkt eller ring oss.`,
+          'formular-mailto',
         );
         return;
       }
@@ -261,6 +268,7 @@ const endpoint = site.formularEndpoint;
       try {
         const svar = await fetch(endpoint, {
           method: 'POST',
+          signal: AbortSignal.timeout(15_000), // hänger tjänsten visas felet i stället för "Skickar …" för alltid
           headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
           body: JSON.stringify({
             ...v,

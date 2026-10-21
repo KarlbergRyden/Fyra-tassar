@@ -40,8 +40,8 @@ const { kategori: k, bild, sida = 'vanster', rubrik } = Astro.props;
         {k.artiklar.map((a) => <li>{a}</li>)}
       </ul>
       <div class="btn-row">
-        <a class="btn" href={site.telefon.href} data-spor="ring"><Icon namn="phone" storlek={18} />Fråga i butiken</a>
-        <a class="btn btn--light" href="#kampanjer">Se kampanjer</a>
+        <a class="btn" href={site.telefon.href} data-spor="ring"><Icon namn="phone" storlek={18} />Ring {site.telefon.visning}</a>
+        <a class="btn btn--light" href="/erbjudanden/">Se erbjudanden</a>
       </div>
     </div>
   </div>

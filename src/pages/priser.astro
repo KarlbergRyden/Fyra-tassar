@@ -1,13 +1,12 @@
 ---
 import Bas from '../layouts/Bas.astro';
-import Icon from '../components/Icon.astro';
 import PageBanner from '../components/PageBanner.astro';
+import Avslut from '../components/Avslut.astro';
+import Tal from '../components/Tal.astro';
 import { site } from '../data/site';
 import { hittaTjanst } from '../data/tjanster';
-import { aktivaErbjudanden } from '../data/erbjudanden';
 
 const klo = hittaTjanst('kloklippning')!;
-const erbjudanden = aktivaErbjudanden();
 const facebook = site.sociala.find((s) => s.namn === 'Facebook')!;
 
 // Ett pris per rad: belopp (om fast pris), eller vem som sätter priset
@@ -15,7 +14,7 @@ const rader = [
   {
     namn: 'Kloklippning',
     href: '/tjanster/kloklippning/',
-    text: 'Tidsbokad. Betalas med Klarna när du bokar.',
+    text: 'Tidsbokad, betalas i förväg.',
     belopp: klo.pris.belopp,
     fraga: undefined as string | undefined,
     av: undefined as string | undefined,
@@ -24,19 +23,19 @@ const rader = [
   {
     namn: 'Hundtrim',
     href: '/tjanster/hundtrim/',
-    text: 'Vardagstrim efter dina önskemål. Även kattklippning.',
+    text: 'Vardagstrim efter dina önskemål. Även katt.',
     belopp: undefined,
     fraga: 'Pris vid bokning',
-    av: 'Anna-Lena’s hundtrim',
+    av: 'Anna-Lena’s hundtrim · 072-308 05 00',
     knapp: { text: 'Skicka sms', href: 'sms:+46723080500', extern: false },
   },
   {
     namn: 'Hundfriskvård',
     href: '/tjanster/hundfriskvard/',
-    text: 'Massage, laser och elektroterapi för hunden.',
+    text: 'Massage, laser och elektroterapi.',
     belopp: undefined,
     fraga: 'Pris vid bokning',
-    av: 'Nillans hundhälsa',
+    av: 'Nillans hundhälsa · 073-698 10 09',
     knapp: { text: 'Ring', href: 'tel:+46736981009', extern: false },
   },
   {
@@ -48,14 +47,6 @@ const rader = [
     av: 'AnetteZim@hotmail.com',
     knapp: { text: 'Anmäl', href: facebook.url, extern: true },
   },
-];
-
-// Gott att veta – fyra korta punkter
-const gottAtVeta = [
-  { stor: 'Inklusive moms', text: 'Alla priser är i svenska kronor till privatperson.' },
-  { stor: 'Betala i förväg', text: 'Kloklippning betalas med Klarna när du bokar tiden.' },
-  { stor: 'Avboka i tid', text: 'Kloklippning avbokas senast 24 timmar innan. Uteblivna besök debiteras till 100 %.' },
-  { stor: 'Osäker?', text: `Ring oss på ${site.telefon.visning} så hjälper vi dig.` },
 ];
 ---
 
@@ -69,12 +60,9 @@ const gottAtVeta = [
       ingress="Tydliga priser, utan överraskningar. Alla priser är i svenska kronor och inklusive moms."
       steg={[{ text: 'Priser' }]}
       etikett="Priser"
-    >
-      <a class="btn" href={site.bokningUrl} rel="noopener" data-spor="priser-boka">Boka kloklippning</a>
-      <a class="btn btn--light" href="/kontakt/">Fråga om pris</a>
-    </PageBanner>
+    />
 
-    <!-- 1. Tjänster: ett pris, en handling per rad -->
+    <!-- Tjänster: ett pris och en handling per rad -->
     <section class="section" aria-labelledby="tjanstepris">
       <div class="container">
         <div class="section-head" data-reveal>
@@ -82,7 +70,7 @@ const gottAtVeta = [
             <p class="eyebrow">Tjänster</p>
             <h2 id="tjanstepris">Vad kostar det?</h2>
           </div>
-          <p>Kloklippning har fast pris. Hundtrim och friskvård prissätts av den som utför dem – fråga när du bokar.</p>
+          <p>Kloklippning har fast pris. Hundtrim och friskvård prissätts av den som utför dem.</p>
         </div>
 
         <ul class="pris-lista" data-reveal-stagger>
@@ -94,7 +82,7 @@ const gottAtVeta = [
                 <div class="pris-rad__pris">
                   {
                     r.belopp ? (
-                      <span class="pris-rad__belopp">{r.belopp}<span class="pris-rad__kr"> kr</span></span>
+                      <span class="pris-rad__belopp"><Tal varde={r.belopp} /><span class="pris-rad__kr"> kr</span></span>
                     ) : (
                       <>
                         <span class="pris-rad__fraga">{r.fraga}</span>
@@ -116,68 +104,29 @@ const gottAtVeta = [
             ))
           }
         </ul>
-      </div>
-    </section>
 
-    <!-- 2. Foder och tillbehör -->
-    <section class="section section--tint" aria-labelledby="produktpris">
-      <div class="container split split--even">
-        <div data-reveal>
-          <p class="eyebrow">Foder och tillbehör</p>
-          <h2 id="produktpris">Priset ser du i butiken</h2>
-          <p class="lead">
-            Vi har ingen webbutik och visar därför inga priser här som kan vara fel. Pris på beställningsvaror, som
-            hundbur från 4pets PRO i andra storlekar, lämnar vi i butiken.
-          </p>
-          <div class="btn-row mt-5">
-            <a class="btn" href={site.telefon.href} data-spor="ring"><Icon namn="phone" storlek={18} />Ring {site.telefon.visning}</a>
-            <a class="btn btn--light" href="/produkter/">Se sortimentet</a>
-          </div>
-        </div>
-        {
-          erbjudanden.length > 0 && (
-            <div data-reveal>
-              <h3 class="pris-rubrik">Foderkampanjer just nu</h3>
-              <ul class="price-list">
-                {erbjudanden.map((e) => (
-                  <li>
-                    <span class="price-list__name">
-                      <strong>{e.namn}</strong>
-                      <small>{e.detalj}</small>
-                    </span>
-                    <span class="price-list__price">
-                      {e.pris} kr
-                      <span class="price-list__old">
-                        <span class="sr-only">Ordinarie pris </span>
-                        {e.franPris ? 'från ' : ''}
-                        {e.ordinarie} kr
-                      </span>
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )
-        }
-      </div>
-    </section>
-
-    <!-- 3. Gott att veta -->
-    <section class="section" aria-labelledby="gott-rubrik">
-      <div class="container">
-        <div class="section-head" data-reveal>
-          <div>
-            <p class="eyebrow">Gott att veta</p>
-            <h2 id="gott-rubrik">Så fungerar det</h2>
-          </div>
-        </div>
-        <ul class="facts" data-reveal-stagger>
-          {gottAtVeta.map((g) => <li><strong>{g.stor}</strong><p>{g.text}</p></li>)}
-        </ul>
-        <p class="text-soft mt-6">
-          Fullständiga villkor finns på sidan om <a href={`/tjanster/${klo.slug}/`}>{klo.namn.toLowerCase()}</a>.
+        <p class="text-soft mt-5 mb-0">
+          Kloklippning avbokas senast 24 timmar innan. Uteblivna besök debiteras till 100 %.
         </p>
       </div>
     </section>
+
+    <!-- Foder och tillbehör: priset ser man i butiken, kampanjerna finns på sin egen sida -->
+    <section class="section section--tint" aria-labelledby="produktpris">
+      <div class="container" data-reveal>
+        <p class="eyebrow">Foder och tillbehör</p>
+        <h2 id="produktpris">Priset ser du i butiken</h2>
+        <p class="lead">
+          Webbshopen är under uppbyggnad. Tills vidare ser du priset i butiken, och vi visar inga priser här som kan
+          vara fel.
+        </p>
+        <div class="btn-row mt-5">
+          <a class="btn" href="/erbjudanden/">Se foderkampanjer</a>
+          <a class="btn btn--light" href="/webbshop/">Till webbshopen</a>
+        </div>
+      </div>
+    </section>
+
+    <Avslut rubrik="Frågor om priset? Hör av dig" text="Vi hjälper dig gärna, till exempel med pris på beställningsvaror." />
   </div>
 </Bas>

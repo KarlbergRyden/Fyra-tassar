@@ -1,0 +1,54 @@
+---
+/**
+ * Produktkort för webbshopen. Foto om det finns (source-images/foton/produkt-<id>.jpg, eller `bild`),
+ * annars en elegant linjeillustration.
+ */
+import Bild from './Bild.astro';
+import Produktbild from './Produktbild.astro';
+import Foto from './Foto.astro';
+import { foto, produktFotoId } from '../data/foton';
+import Icon from './Icon.astro';
+import { statusText, type Produkt } from '../data/webbshop';
+import { reserveraLank } from '../lib/formular';
+
+interface Props {
+  produkt: Produkt;
+  /** Visas först efter "Visa alla" */
+  extra?: boolean;
+}
+const { produkt: p, extra = false } = Astro.props;
+const fotoId = produktFotoId(p.id);
+const harFoto = Boolean(foto(fotoId));
+const kopbar = p.status === 'i-lager' && p.pris && p.kopLank;
+---
+
+<article class="produkt" data-kategori={p.djur} data-status={p.status} data-extra={extra ? '' : undefined}>
+  <div class="produkt__bild">
+    {
+      harFoto ? (
+        <Foto id={fotoId} alt={p.namn} sizes="(min-width: 64rem) 22vw, 45vw" />
+      ) : p.bild ? (
+        <Bild namn={p.bild} alt={p.namn} sizes="(min-width: 64rem) 22vw, 45vw" />
+      ) : (
+        <Produktbild typ={p.typ} />
+      )
+    }
+    <span class="produkt__status" data-status={p.status}>{statusText[p.status]}</span>
+  </div>
+  <div class="produkt__text">
+    <h3>{p.namn}</h3>
+    {p.status === 'i-lager' && p.pris && <p class="produkt__pris">{p.pris} kr</p>}
+    {
+      kopbar ? (
+        <a class="btn btn--sm" href={p.kopLank} data-spor="kop">
+          Köp<span class="sr-only"> {p.namn}</span>
+        </a>
+      ) : (
+        <a class="produkt__lank" href={reserveraLank(p.namn)} data-spor="reservera">
+          <span>Fråga i butiken<span class="sr-only"> om {p.namn.toLowerCase()}</span></span>
+          <Icon namn="arrow" storlek={16} />
+        </a>
+      )
+    }
+  </div>
+</article>

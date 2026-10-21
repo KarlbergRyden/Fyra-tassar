@@ -33,46 +33,6 @@
       "kb": 153
     }
   ],
-  "kursband": [
-    {
-      "fil": "/images/kursband-640.webp",
-      "bredd": 640,
-      "hojd": 360,
-      "kb": 15
-    },
-    {
-      "fil": "/images/kursband-1280.webp",
-      "bredd": 1280,
-      "hojd": 720,
-      "kb": 43
-    },
-    {
-      "fil": "/images/kursband-1920.webp",
-      "bredd": 1920,
-      "hojd": 1080,
-      "kb": 75
-    }
-  ],
-  "fragaband": [
-    {
-      "fil": "/images/fragaband-640.webp",
-      "bredd": 640,
-      "hojd": 250,
-      "kb": 9
-    },
-    {
-      "fil": "/images/fragaband-1280.webp",
-      "bredd": 1280,
-      "hojd": 500,
-      "kb": 30
-    },
-    {
-      "fil": "/images/fragaband-1920.webp",
-      "bredd": 1920,
-      "hojd": 750,
-      "kb": 117
-    }
-  ],
   "bannerHund": [
     {
       "fil": "/images/bannerHund-750.webp",

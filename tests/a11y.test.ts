@@ -17,7 +17,7 @@ function html(mapp: string, ut: string[] = []): string[] {
   return ut;
 }
 
-const sidor = existsSync(dist) ? html(dist) : [];
+const sidor = (existsSync(dist) ? html(dist) : []).filter((f) => !/http-equiv="refresh"/i.test(readFileSync(f, 'utf8')));
 
 describe.skipIf(sidor.length === 0)('tillgänglighet (axe, WCAG 2.2 AA)', () => {
   for (const fil of sidor) {

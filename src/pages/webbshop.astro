@@ -3,45 +3,34 @@ import Bas from '../layouts/Bas.astro';
 import Icon from '../components/Icon.astro';
 import PageBanner from '../components/PageBanner.astro';
 import KategoriPanel from '../components/KategoriPanel.astro';
-import SlutCta from '../components/SlutCta.astro';
+import ProduktKort from '../components/ProduktKort.astro';
+import Avslut from '../components/Avslut.astro';
+import Tassspar from '../components/Tassspar.astro';
 import { kategorier, fodermarken, leverantorer, utvaldProdukt } from '../data/produkter';
-import { aktivaErbjudanden } from '../data/erbjudanden';
+import { produkterFor, webbshopOppen } from '../data/webbshop';
 import { site } from '../data/site';
 
 const hund = kategorier.find((k) => k.id === 'hund')!;
 const katt = kategorier.find((k) => k.id === 'katt')!;
-const erbjudanden = aktivaErbjudanden();
-
-const trygghet = [
-  { ikon: 'box', text: 'Brett sortiment för hund och katt' },
-  { ikon: 'tag', text: 'Aktuella foderkampanjer' },
-  { ikon: 'shield', text: 'Kunnig personal – 20 års erfarenhet' },
-  { ikon: 'parking', text: 'Gratis parkering utanför' },
-];
+const oppen = webbshopOppen();
 ---
 
 <Bas
-  title="Produkter till hund och katt i Borlänge"
-  description="Foder och tillbehör till hund och katt i Borlänge: koppel, selar, sängar, kattsand, klösträd och foder från bland annat Royal Canin, Eukanuba och Taste of the Wild."
+  title="Webbshop för hund och katt"
+  description="Webbshop för hund och katt i Borlänge, öppnar snart. Foder, koppel, sängar, kattsand och klösträd. Hela sortimentet finns i butiken."
 >
   <div class="page-dark">
     <PageBanner
-      titel="Produkter till hund och katt"
-      ingress="Foder och tillbehör för både vardag och träning. Saknar du något? Fråga oss – vi beställer hem det om det går."
-      steg={[{ text: 'Produkter' }]}
-      etikett="Sortiment"
+      titel="Webbshop"
+      ingress={oppen
+        ? 'Foder och tillbehör till hund och katt, hem till dig.'
+        : 'Foder och tillbehör till hund och katt. Webbshopen öppnar snart – tills dess hittar du hela sortimentet i butiken.'}
+      steg={[{ text: 'Webbshop' }]}
+      etikett={oppen ? 'Webbshop' : 'Öppnar snart'}
     >
       <a class="btn" href={site.telefon.href} data-spor="ring"><Icon namn="phone" storlek={18} />Ring och fråga</a>
-      <a class="btn btn--light" href="#kampanjer">Se kampanjer</a>
+      <a class="btn btn--light" href="/erbjudanden/">Se erbjudanden</a>
     </PageBanner>
-
-    <div class="infostrip on-dark">
-      <div class="container">
-        <ul class="infostrip__list">
-          {trygghet.map((t) => <li><Icon namn={t.ikon} storlek={20} />{t.text}</li>)}
-        </ul>
-      </div>
-    </div>
 
     <h2 class="sr-only">Produktkategorier</h2>
     <div class="container">
@@ -53,51 +42,32 @@ const trygghet = [
     </div>
 
     <KategoriPanel kategori={hund} bild="bannerSkog" sida="vanster" rubrik="Allt till hunden" />
-    <KategoriPanel kategori={katt} bild="bannerKatt" sida="hoger" rubrik="Allt till katten" />
-
-    <section class="section--tight" aria-label="Pris och lagerstatus">
+    <section class="shop" data-kategori="hund" aria-labelledby="shop-hund">
       <div class="container">
-        <p class="text-soft mb-0">
-          Pris och lagerstatus ser du i butiken. Vi har ingen webbutik – ring eller mejla så kollar vi gärna om vi har
-          det du söker.
+        <h3 class="shop__rubrik" id="shop-hund" data-reveal>
+          {oppen ? 'Webbshop – hund' : 'Snart i webbshopen – hund'}
+        </h3>
+        <div class="shop__grid" data-reveal-stagger>
+          {produkterFor('hund').map((p, i) => <ProduktKort produkt={p} extra={i >= 4} />)}
+        </div>
+        <p class="shop__mer" hidden data-mer>
+          <button class="btn btn--light btn--sm" type="button" aria-expanded="false" data-visa-alla>Visa alla</button>
         </p>
       </div>
     </section>
 
-    <!-- ===== Foder och kampanjer: här finns köpbeslutet ===== -->
-    <section class="section" id="kampanjer" aria-labelledby="kampanjer-rubrik">
+    <KategoriPanel kategori={katt} bild="bannerKatt" sida="hoger" rubrik="Allt till katten" />
+    <section class="shop" data-kategori="katt" aria-labelledby="shop-katt">
       <div class="container">
-        <div class="section__head" data-reveal>
-          <p class="eyebrow"><Icon namn="tag" storlek={18} />Erbjudanden</p>
-          <h2 id="kampanjer-rubrik">Foderkampanjer i butiken</h2>
-          <p>Priserna gäller i butiken. Hämta hem foder till kampanjpris.</p>
+        <h3 class="shop__rubrik" id="shop-katt" data-reveal>
+          {oppen ? 'Webbshop – katt' : 'Snart i webbshopen – katt'}
+        </h3>
+        <div class="shop__grid" data-reveal-stagger>
+          {produkterFor('katt').map((p, i) => <ProduktKort produkt={p} extra={i >= 4} />)}
         </div>
-        {
-          erbjudanden.length > 0 && (
-            <div class="grid grid--4" data-reveal-stagger>
-              {erbjudanden.map((e) => (
-                <article class="deal">
-                  <h3>{e.namn}</h3>
-                  <p>{e.detalj}</p>
-                  <div class="deal__prices">
-                    <span class="deal__price">{e.pris} kr</span>
-                    <span class="deal__old">
-                      <span class="sr-only">Ordinarie pris</span>
-                      {e.franPris ? 'från ' : ''}
-                      {e.ordinarie} kr
-                    </span>
-                  </div>
-                </article>
-              ))}
-            </div>
-          )
-        }
-        <div class="btn-row mt-6">
-          <a class="btn" href={site.adress.kartaUrl} target="_blank" rel="noopener noreferrer" data-spor="karta"
-            ><Icon namn="pin" storlek={18} />Hitta hit<span class="sr-only"> (öppnas i ny flik)</span></a
-          >
-          <a class="btn btn--light" href="/erbjudanden/">Alla erbjudanden</a>
-        </div>
+        <p class="shop__mer" hidden data-mer>
+          <button class="btn btn--light btn--sm" type="button" aria-expanded="false" data-visa-alla>Visa alla</button>
+        </p>
       </div>
     </section>
 
@@ -106,11 +76,17 @@ const trygghet = [
         <div class="section__head" data-reveal>
           <p class="eyebrow">Foder</p>
           <h2 id="foder-rubrik">Fodermärken</h2>
-          <p>Torrfoder och mer för hund och katt från bland annat dessa märken.</p>
+          <p>
+            Torrfoder och mer för hund och katt från bland annat dessa märken.
+            <a href="/hitta-foder/" data-spor="passar-foderhjalp">Osäker på vilket? Hitta rätt foder.</a>
+          </p>
         </div>
-        <ul class="chips" id="marken" data-reveal>
-          {fodermarken.map((m) => <li>{m}</li>)}
-        </ul>
+        <details class="faldbar" id="marken" data-reveal>
+          <summary>Visa alla märken ({fodermarken.length})</summary>
+          <ul class="chips">
+            {fodermarken.map((m) => <li>{m}</li>)}
+          </ul>
+        </details>
       </div>
     </section>
 
@@ -141,31 +117,24 @@ const trygghet = [
       </div>
     </section>
 
+    <Tassspar />
+
     <section class="section section--tint" id="bestall" aria-labelledby="bestall-rubrik">
       <div class="container">
-        <div class="split split--even">
+        <div>
           <div data-reveal>
             <p class="eyebrow">Beställning</p>
             <h2 id="bestall-rubrik">Hittar du inte det du söker?</h2>
             <p class="lead">
-              Vi beställer hem produkter som vi inte har i butiken, om det går. Hör av dig så berättar vi vad som är
-              möjligt.
+              Vi beställer hem produkter som vi inte har i butiken, om det går.{' '}
+              {oppen
+                ? 'Pris och lagerstatus ser du i webbshopen och i butiken.'
+                : 'Webbshopen är under uppbyggnad – tills vidare ser du pris och lagerstatus i butiken.'}
             </p>
             <div class="btn-row mt-6">
-              <a class="btn" href={site.telefon.href} data-spor="ring"><Icon namn="phone" storlek={18} />Ring {site.telefon.visning}</a>
-              <a class="btn btn--light" href="/kontakt/">Skriv till oss</a>
+              <a class="btn" href="/kontakt/">Fråga oss</a>
             </div>
           </div>
-          <ol class="steps" data-reveal-stagger>
-            <li>
-              <h3>Berätta vad du söker</h3>
-              <p>Kom förbi, ring eller skriv till oss och säg vilken produkt du är ute efter.</p>
-            </li>
-            <li>
-              <h3>Vi kollar om vi kan beställa hem den</h3>
-              <p>Vi tittar på vad som går att få tag i via våra leverantörer.</p>
-            </li>
-          </ol>
         </div>
       </div>
     </section>
@@ -177,18 +146,20 @@ const trygghet = [
           <h2 id="lev-rubrik">Märken vi arbetar med</h2>
           <p>Tillbehör, hälso- och pälsvård från bland annat dessa leverantörer.</p>
         </div>
-        <ul class="chips" data-reveal>
-          {leverantorer.map((m) => <li>{m}</li>)}
-        </ul>
+        <details class="faldbar" data-reveal>
+          <summary>Visa alla leverantörer ({leverantorer.length})</summary>
+          <ul class="chips">
+            {leverantorer.map((m) => <li>{m}</li>)}
+          </ul>
+        </details>
       </div>
     </section>
+    <Avslut />
   </div>
-
-  <SlutCta />
 </Bas>
 
 <script>
-  // Filter (enbart förbättring – utan JS visas alla kategorier)
+  // Filter (enbart förbättring – utan JS visas alla kategorier och produkter)
   const filter = document.querySelector<HTMLElement>('[data-filter]');
   if (filter) {
     filter.hidden = false;
@@ -206,7 +177,28 @@ const trygghet = [
     if (fran === 'hund' || fran === 'katt') visa(fran);
   }
 
-  // Panelernas rörelse: parallax på bilden och en ljuspunkt som följer musen (av vid reducerad rörelse)
+  // Produktrutnät: fyra kort per djur först, resten med "Visa alla" (utan JS visas alla)
+  document.querySelectorAll<HTMLElement>('.shop__grid').forEach((grid) => {
+    const extra = grid.querySelectorAll('[data-extra]').length;
+    const rad = grid.parentElement?.querySelector<HTMLElement>('[data-mer]');
+    const knapp = rad?.querySelector<HTMLButtonElement>('[data-visa-alla]');
+    if (!extra || !rad || !knapp) return;
+    const totalt = grid.querySelectorAll('.produkt').length;
+    grid.dataset.kompakt = 'true';
+    knapp.textContent = `Visa alla ${totalt}`;
+    rad.hidden = false;
+    knapp.addEventListener('click', () => {
+      const kompakt = grid.dataset.kompakt === 'true';
+      grid.dataset.kompakt = String(!kompakt);
+      knapp.setAttribute('aria-expanded', String(kompakt));
+      knapp.textContent = kompakt ? 'Visa färre' : `Visa alla ${totalt}`;
+    });
+  });
+
+  // Länk till #marken öppnar märkeslistan
+  if (location.hash === '#marken') document.querySelector<HTMLDetailsElement>('#marken')?.setAttribute('open', '');
+
+  // Panelernas rörelse: parallax på bilden (av vid reducerad rörelse)
   if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     const paneler = [...document.querySelectorAll<HTMLElement>('.cat-panel')];
     let vantar = false;
@@ -229,15 +221,5 @@ const trygghet = [
     window.addEventListener('scroll', planera, { passive: true });
     window.addEventListener('resize', planera);
     rita();
-
-    if (window.matchMedia('(pointer: fine)').matches) {
-      for (const p of paneler) {
-        p.addEventListener('pointermove', (e) => {
-          const r = p.getBoundingClientRect();
-          p.style.setProperty('--mx', `${e.clientX - r.left}px`);
-          p.style.setProperty('--my', `${e.clientY - r.top}px`);
-        });
-      }
-    }
   }
 </script>

@@ -180,16 +180,5 @@ const { tjanster } = Astro.props;
       const aktiv = knappar.find((k) => k.getAttribute('aria-selected') === 'true');
       if (aktiv) flytta(aktiv);
     });
-
-    // Ljuspunkt som följer musen över panelerna
-    if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && window.matchMedia('(pointer: fine)').matches) {
-      for (const p of paneler) {
-        p.addEventListener('pointermove', (e) => {
-          const r = p.getBoundingClientRect();
-          p.style.setProperty('--mx', `${e.clientX - r.left}px`);
-          p.style.setProperty('--my', `${e.clientY - r.top}px`);
-        });
-      }
-    }
   }
 </script>

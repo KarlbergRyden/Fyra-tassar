@@ -1,17 +1,15 @@
 ---
 import Bas from '../../layouts/Bas.astro';
-import Icon from '../../components/Icon.astro';
 import PageBanner from '../../components/PageBanner.astro';
 import TjanstVaeljare, { type ValjbarTjanst } from '../../components/TjanstVaeljare.astro';
-import SlutCta from '../../components/SlutCta.astro';
-import { tjanster, hittaTjanst } from '../../data/tjanster';
+import Avslut from '../../components/Avslut.astro';
+import { tjanster } from '../../data/tjanster';
 import { site } from '../../data/site';
 
-const kloklippning = hittaTjanst('kloklippning')!;
 const facebook = site.sociala.find((s) => s.namn === 'Facebook')!;
 
 const meta: Record<string, string> = {
-  kloklippning: '160 kr · boka online',
+  kloklippning: 'Boka online',
   hundtrim: 'Boka via sms · även katt',
   hundfriskvard: 'Massage · laser · elektroterapi',
 };
@@ -44,7 +42,6 @@ const valjbara: ValjbarTjanst[] = [
       'En kurs för dig och din hund',
       'Anmälan i butiken eller via Facebook',
       'Frågor om kurserna besvaras av Anette',
-      'Gratis parkering direkt utanför butiken',
     ],
     pris: { rubrik: 'Fråga Anette', text: '' },
     utfors: 'Butiken',
@@ -56,19 +53,7 @@ const valjbara: ValjbarTjanst[] = [
   },
 ];
 
-const rader = [
-  { namn: 'Kloklippning', href: '/tjanster/kloklippning/', pris: '160 kr', bokning: 'Online via Bokadirekt, betalning med Klarna', av: 'Butikens kloklippare' },
-  { namn: 'Hundtrim', href: '/tjanster/hundtrim/', pris: 'Lämnas vid bokning', bokning: 'Sms till 072-308 05 00 (skriv att det gäller Borlänge)', av: 'Anna-Lena’s hundtrim' },
-  { namn: 'Hundfriskvård', href: '/tjanster/hundfriskvard/', pris: 'Lämnas av utföraren', bokning: 'Ring 073-698 10 09', av: 'Nillans hundhälsa' },
-  { namn: 'Hundkurser', href: '/kurser/', pris: 'Fråga Anette', bokning: 'Anmälan i butiken eller via Facebook', av: 'Se kurssidan' },
-];
 
-const trygghet = [
-  { ikon: 'tag', text: 'Tydligt pris, i förväg' },
-  { ikon: 'clock', text: 'Boka online eller direkt' },
-  { ikon: 'shield', text: 'Erfarna utförare' },
-  { ikon: 'parking', text: 'Gratis parkering utanför' },
-];
 ---
 
 <Bas
@@ -83,16 +68,8 @@ const trygghet = [
       etikett="Tjänster"
     >
       <a class="btn" href={site.bokningUrl} rel="noopener" data-spor="tjanster-boka">Boka kloklippning</a>
-      <a class="btn btn--light" href="#jamfor">Jämför tjänsterna</a>
+      <a class="btn btn--light" href="/priser/">Se priser</a>
     </PageBanner>
-
-    <div class="infostrip on-dark">
-      <div class="container">
-        <ul class="infostrip__list">
-          {trygghet.map((t) => <li><Icon namn={t.ikon} storlek={20} />{t.text}</li>)}
-        </ul>
-      </div>
-    </div>
 
     <section class="section" aria-labelledby="valj-rubrik">
       <div class="container">
@@ -107,47 +84,6 @@ const trygghet = [
       </div>
     </section>
 
-    <section class="section section--tint" id="jamfor" aria-labelledby="jamfor-rubrik">
-      <div class="container">
-        <div class="section-head" data-reveal>
-          <div>
-            <p class="eyebrow">Överblick</p>
-            <h2 id="jamfor-rubrik">Tjänsterna sida vid sida</h2>
-          </div>
-          <p>Pris, hur du bokar och vem som utför – på ett ställe.</p>
-        </div>
-        <div class="table-wrap" tabindex="0" role="region" aria-label="Jämförelse av tjänster, kan scrollas i sidled" data-reveal>
-          <table class="table">
-            <thead>
-              <tr>
-                <th scope="col">Tjänst</th>
-                <th scope="col">Pris</th>
-                <th scope="col">Så bokar du</th>
-                <th scope="col">Utförs av</th>
-              </tr>
-            </thead>
-            <tbody>
-              {
-                rader.map((r) => (
-                  <tr>
-                    <th scope="row"><a href={r.href}>{r.namn}</a></th>
-                    <td>{r.pris}</td>
-                    <td>{r.bokning}</td>
-                    <td>{r.av}</td>
-                  </tr>
-                ))
-              }
-            </tbody>
-          </table>
-        </div>
-        <div class="btn-row mt-6">
-          <a class="btn" href={kloklippning.cta.href} rel="noopener" data-spor="tjanster-boka">Boka kloklippning</a>
-          <a class="btn btn--light" href="/priser/">Se alla priser</a>
-          <a class="btn btn--light" href="/kontakt/">Fråga oss</a>
-        </div>
-      </div>
-    </section>
+    <Avslut rubrik="Osäker på vilken tjänst som passar?" text="Ring eller skriv så hjälper vi dig att välja." />
   </div>
-
-  <SlutCta />
 </Bas>

@@ -1,54 +1,32 @@
-# Ägarens checklista före publicering
+# Ägarens checklista
 
-All information på webbplatsen är hämtad från den nuvarande sajten fyratassar.nu (hämtad 2026-10-12). Inget är påhittat, men **flera uppgifter kan vara inaktuella eller saknas**. Gå igenom listan innan lansering.
+Allt på sajten bygger på uppgifter från den gamla sajten fyratassar.nu (hämtad 2026-10-12). Inget är påhittat, men en del kan vara inaktuellt eller saknas. Gå igenom i den här ordningen.
 
-## 1. Måste verifieras (kan vara fel eller föråldrat)
+## 1. Före lansering
 
-- [ ] **Foderkampanjerna** (`src/data/erbjudanden.ts`) är kopierade från sidan "Aktuellt". Är priserna och produkterna fortfarande aktuella? Sätt annars `aktiv: false` eller `giltigtTill`.
-- [ ] **Kloklippning, 160 kr** (`src/data/tjanster.ts`): stämmer priset, att det betalas med Klarna vid bokning, tiderna ("vanligtvis tisdagar ca 15–19") och villkoren (avbokning 24 h innan, uteblivet besök debiteras 100 %)?
-- [ ] **Moms:** sidan *Priser* anger att priserna är inklusive moms. Bekräfta.
-- [ ] **Vilka djur klipps klor på?** Texten säger "ditt djur" eftersom källan inte specificerar det. Skriv gärna "hund" och/eller "katt".
-- [ ] **Bokadirekt-länk** (`site.ts` → `bokningUrl`): öppna länken och kontrollera att den går till rätt sida.
-- [ ] **Facebook och Instagram** (`site.ts` → `sociala`): är kontona aktiva och officiella?
-- [ ] **Samarbetspartners:** Anna-Lena’s hundtrim (sms 072-308 05 00) och Nillans hundhälsa (073-698 10 09, nillanshundhalsa.se). Är kontaktuppgifterna aktuella, och är det okej att de nämns? Vet du pris eller var behandlingarna sker kan det läggas till.
-- [ ] **Hundkurser:** källsidan hade inga kurser, datum eller priser, bara "anmälan i butiken eller via Facebook" och Anettes e-post. Sidan `/kurser/` är skriven därefter. **Lägg till aktuella kurser (namn, datum, pris)** när du har dem.
-- [ ] **Personal** (`src/data/team.ts`): kontrollera namn, roller och texter. Har personerna godkänt att de visas?
-- [ ] **Vi har besökt tillverkarna** (Fourfriends i Prag, Profine): stämmer formuleringen?
-- [ ] **4pets PRO-hundbur:** "schweiziskt tillverkat, giftfritt, TÜV SÜD-certifierat för krocksäkerhet, visningsex i butiken". Kontrollera mot tillverkaren.
-- [ ] **Märkeslistor** (`produkter.ts`): fodermärken och leverantörer är kopierade från den gamla sajten. Ta bort märken ni inte längre säljer.
-- [ ] **Öppettider** och **vägbeskrivningen** ("samma hus som gamla Dollarstore, bredvid Procurator").
+- [ ] **Koppla formulärtjänsten** enligt `GUIDE-FORMULAR.md`. Annars når meddelanden bara fram om besökaren har ett e-postprogram, och knapparna "Fråga / reservera" fungerar sämre.
+- [ ] **Organisationsnummer** i `src/data/site.ts` (`organisationsnummer`). Visas då i sidfoten.
+- [ ] **Kontrollera priser och villkor:** kloklippning 160 kr (betalas med Klarna, avbokning senast 24 timmar innan), foderkampanjerna i `src/data/erbjudanden.ts` (sätt `aktiv: false` eller `giltigtTill` på gamla), samt att alla priser är *inklusive moms*.
+- [ ] **Fyll i kurserna:** sidan `/kurser/` har bara anmälningssätten (butiken, Facebook, Anette). Lägg till kursnamn, datum och pris när ni har dem. Lägg gärna pris på hundtrim och friskvård om ni vill visa dem.
+- [ ] **Bekräfta bildrättigheter** för logotyp, hero- och bannerfoton, personalbilden och kursbilden (hämtade från gamla sajten, sparade i `source-images/`). Fotona ser ut som stockbilder, så kontrollera licensen.
+- [ ] **Läs igenom fakta en gång:** personal och roller (`team.ts`, har de godkänt att visas?), samarbetspartnerna Anna-Lena’s hundtrim och Nillans hundhälsa (nummer, namn), 4pets-påståendena (`produkter.ts`), märkeslistorna, öppettider och vägbeskrivning. Facebook, Instagram och Bokadirekt-länkarna svarade 2026-10-21.
+- [ ] **Läs integritetspolicyn** (`/integritet/`). Den beskriver bara kontaktformuläret och att inga cookies används.
+- [ ] **Omdirigeringar:** sätt upp 301-omdirigeringar från de gamla adresserna (tabellen i README, avsnittet *Publicering*). `/produkter/` hanteras redan av sajten.
 
-## 2. Saknas – måste fyllas i
+## 2. Direkt efter lansering
 
-- [ ] **Organisationsnummer** (`site.ts` → `organisationsnummer`). Visas i sidfot och integritetspolicy när det är ifyllt.
-- [ ] **Kontaktformuläret:** välj mottagare. Standard öppnar besökarens e-postprogram. Se README, avsnittet *Kontaktformuläret*, för att koppla en formulärtjänst (kräver konto hos en tjänst, ingen nyckel läggs i koden).
-- [ ] **Integritetspolicyn** beskriver hur webbplatsen *faktiskt* fungerar (bara kontaktformuläret, inga cookies). Läs igenom den. Behåller ni uppgifter längre eller använder andra system (t.ex. kundregister) måste texten kompletteras. Det finns ingen cookiebanner, eftersom inga cookies eller spårare används.
-- [ ] **Bildrättigheter.** Logotyp, djurfries, hero- och bannerfoton, bildplattorna, personalbilden och kursbilden är hämtade från fyratassar.nu (sparade i `source-images/`). Bekräfta att ni har rätt att använda dem. Fotona ser ut att vara stockbilder, så kontrollera licensen för användning på en ny sajt. Byt gärna mot egna bilder på butiken och produkterna. Lägg ny originalfil i `source-images/`, justera `scripts/process-images.mjs` och kör `npm run images`.
-- [ ] **Bildtexter:** alt-texterna i `src/data/bilder.ts` är beskrivande men korta. Originalets bildtext "Märta Andersson med sina hundar" (kurssidan) är inte med eftersom jag inte vet vem som avbildas. Skriv rätt namn och roll om ni vill ha den.
-- [ ] **Omdömen och referenser:** inga äkta kundomdömen fanns att hämta, så sidorna `/referenser/` och omdömen är utelämnade medvetet. Lägg till när du har skriftligt tillstånd av kunderna.
-
-### Kundnärvaro (nytt)
-
-- [ ] **Koppla formulärtjänsten** enligt `GUIDE-FORMULAR.md`. Annars når meddelanden bara fram om besökaren har ett e-postprogram, och "Fråga / reservera" fungerar sämre.
-- [ ] **Bekräfta att ni kan hantera "Fråga / reservera"** (att svara och eventuellt lägga undan en vara), eller be mig ändra knappens text.
-- [ ] **Omdömen:** när ni har riktiga omdömen med skriftligt tillstånd, eller Google-betyg, lägg in dem i `src/data/omdomen.ts`. Sektionen visas då automatiskt.
-- [ ] **Egna butiksbilder** (fasad, interiör, produkter) ökar förtroendet mer än något annat. Leverera dem så byter jag ut stockfotona.
-- [ ] **Avvikande öppettider** (helger): lägg in dem i `undantag` i `src/data/site.ts` så att "Öppet nu" stämmer.
-
-## 3. Medvetet utelämnat från den gamla sajten
-
-| Gammal sida | Skäl |
-| --- | --- |
-| Galleri (Hundens dag 2017–2019, Hundens helg 2015, Familjedag 2014 och 2025) | Foton saknas och rättigheter ej verifierade |
-| Nyheter i butiken, 10-årsjubileum, Standardt | Innehåll kunde inte hämtas |
-| Leverantörs- och fodermärkenas logotyper | Tredje parts varumärken. Märkena visas som textlistor istället |
-| Bildkarusellen på startsidan (flera bilder som byts automatiskt) | Kravspecen avråder från automatiska karuseller. Första bilden är hero, den andra är hundkurs-bandet |
-| Drop-in-kloklippning 1/10-26 med Jenny | Datumet har passerat. Lägg till nya drop-in-tillfällen i `kloklippning` när de är bestämda |
-| Kontaktformulärets sifferkontroll | Ersatt av ett dolt skräpskydd som inte stör besökaren |
-
-## 4. Efter publicering
-
-- [ ] Sätt upp 301-omdirigeringar från gamla adresser (se README → *Publicering*).
-- [ ] Skicka in sitemap i Google Search Console.
-- [ ] Skicka ett testmeddelande via kontaktformuläret och kontrollera att det når `info@fyratassar.nu`.
+- [ ] Skicka sitemapen (`/sitemap-index.xml`) till Google Search Console och testa kontaktformuläret med ett riktigt meddelande.
 - [ ] Uppdatera Google-företagsprofil och Bokadirekt så att de pekar på den nya sajten.
+- [ ] **Egna foton** (fasad, interiör, personalporträtt, produkter) ökar förtroendet mer än något annat. Följ `FOTOGUIDE.md`: lägg filerna i `source-images/foton/` och kör `npm run images`. De visas av sig själva.
+- [ ] **Omdömen:** lägg in Google-betyg eller citat (med kundens skriftliga tillstånd) i `src/data/omdomen.ts`. Sektionen visas då automatiskt.
+- [ ] **Slå på mätningen** så ni ser vad som ger samtal, bokningar och förfrågningar: skapa ett konto hos Plausible eller GoatCounter och fyll i `.env` (se README, avsnittet *Mätning*). Utan det mäts ingenting.
+- [ ] **Slutdatum på kampanjerna:** lägg in `giltigtTill` i `src/data/erbjudanden.ts` när ni vet det, så kan sajten visa ett riktigt "gäller till". Kräver att sajten byggs om dagligen.
+- [ ] **Helgöppettider:** lägg in avvikande dagar i `undantag` i `src/data/site.ts` så att "Öppet nu" stämmer.
+
+## 3. När webbshopen ska öppna
+
+- [ ] Följ `VILLKOR-WEBBSHOP.md` (köpvillkor, ångerrätt, leverans, retur, reklamation) och lägg produkterna i `src/data/webbshop.ts`.
+
+## Medvetet utelämnat från den gamla sajten
+
+Galleri, "Nyheter i butiken", 10-årsjubileum och Standardt (innehåll eller rättigheter saknas), tredje parts varumärkeslogotyper (märkena visas som text), bildkarusellen (kravspecen avråder från automatiska karuseller) och drop-in-tillfället med Jenny 1/10-26 (datumet har passerat).

@@ -1,14 +1,14 @@
 ---
 import Bas from '../layouts/Bas.astro';
 import PageBanner from '../components/PageBanner.astro';
-import { site, adressRad } from '../data/site';
+import { site, adressRad, analysTjanst } from '../data/site';
 
 const harFormularTjanst = Boolean(site.formularEndpoint);
 ---
 
 <Bas
   title="Integritetspolicy och cookies"
-  description="Så behandlar Fyra Tassar i Borlänge dina personuppgifter. Webbplatsen använder inga cookies och ingen spårning."
+  description="Så behandlar Fyra Tassar i Borlänge dina personuppgifter. Webbplatsen använder inga cookies."
 >
   <div class="page-dark">
   <PageBanner
@@ -64,11 +64,23 @@ const harFormularTjanst = Boolean(site.formularEndpoint);
       </p>
 
       <h2>Cookies och spårning</h2>
-      <p>
-        Den här webbplatsen använder <strong>inga cookies</strong> och ingen webbanalys eller annan spårning. Därför
-        visar vi ingen cookiebanner. Typsnitten ligger på vår egen server, så inga uppgifter om ditt besök skickas till
-        typsnittsleverantörer.
-      </p>
+      {
+        analysTjanst ? (
+          <p>
+            Den här webbplatsen använder <strong>inga cookies</strong>. Därför visar vi ingen cookiebanner. Vi mäter
+            besöken med {analysTjanst}, en statistiktjänst som enligt egen uppgift inte använder cookies och inte
+            sparar uppgifter som identifierar dig. Vi ser till exempel vilka sidor som besöks och hur många som
+            trycker på knapparna för att ringa, boka eller fråga, och använder det för att förbättra webbplatsen.
+            Typsnitten ligger på vår egen server, så inga uppgifter om ditt besök skickas till typsnittsleverantörer.
+          </p>
+        ) : (
+          <p>
+            Den här webbplatsen använder <strong>inga cookies</strong> och ingen webbanalys eller annan spårning. Därför
+            visar vi ingen cookiebanner. Typsnitten ligger på vår egen server, så inga uppgifter om ditt besök skickas
+            till typsnittsleverantörer.
+          </p>
+        )
+      }
 
       <h2>Länkar till andra tjänster</h2>
       <p>

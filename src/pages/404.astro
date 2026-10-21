@@ -1,6 +1,7 @@
 ---
 import Bas from '../layouts/Bas.astro';
 import PageBanner from '../components/PageBanner.astro';
+import Tassspar from '../components/Tassspar.astro';
 import { site } from '../data/site';
 ---
 
@@ -17,10 +18,12 @@ import { site } from '../data/site';
     etikett="Fel 404"
   >
     <a class="btn" href="/">Till startsidan</a>
-    <a class="btn btn--light" href="/produkter/">Se produkter</a>
+    <a class="btn btn--light" href="/webbshop/">Till webbshopen</a>
     <a class="btn btn--light" href="/tjanster/">Se tjänster</a>
     <a class="btn btn--light" href="/kontakt/">Kontakta oss</a>
   </PageBanner>
+
+  <Tassspar />
 
   <section class="section--tight">
     <div class="container container--narrow">

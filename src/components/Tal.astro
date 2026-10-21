@@ -1,0 +1,12 @@
+---
+/**
+ * Ett tal som räknas upp när det kommer i bild. Skärmläsare får alltid slutvärdet direkt;
+ * utan JavaScript (eller med reducerad rörelse) står talet kvar som det är.
+ */
+interface Props {
+  varde: number;
+}
+const { varde } = Astro.props;
+---
+
+<span class="tal"><span aria-hidden="true" data-raknaupp={varde}>{varde}</span><span class="sr-only">{varde}</span></span>

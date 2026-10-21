@@ -1,0 +1,36 @@
+---
+/** Bred fotosektion med text över. Visas först när fotot finns (se src/data/foton.ts). */
+import Foto from './Foto.astro';
+import { foto } from '../data/foton';
+
+interface Props {
+  id: string;
+  rubrik: string;
+  text?: string;
+  knapp?: { text: string; href: string; spor?: string };
+  etikett?: string;
+  fokus?: string;
+}
+const { id, rubrik, text, knapp, etikett, fokus = '50% 50%' } = Astro.props;
+const rubrikId = `fotoband-${id}`;
+---
+
+{
+  foto(id) && (
+    <section class="fotoband on-dark" aria-labelledby={rubrikId}>
+      <Foto class="fotoband__img" id={id} alt="" sizes="100vw" fokus={fokus} />
+      <div class="container fotoband__in">
+        <div class="fotoband__text" data-reveal>
+        {etikett && <p class="eyebrow">{etikett}</p>}
+        <h2 id={rubrikId}>{rubrik}</h2>
+        {text && <p class="lead">{text}</p>}
+        {knapp && (
+          <p class="mt-5">
+            <a class="btn" href={knapp.href} data-spor={knapp.spor}>{knapp.text}</a>
+          </p>
+        )}
+        </div>
+      </div>
+    </section>
+  )
+}

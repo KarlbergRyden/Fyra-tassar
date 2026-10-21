@@ -5,7 +5,11 @@ import PageBanner from '../../components/PageBanner.astro';
 import PrisBlock from '../../components/PrisBlock.astro';
 import Steg from '../../components/Steg.astro';
 import Faq from '../../components/Faq.astro';
-import SlutCta from '../../components/SlutCta.astro';
+import Avslut from '../../components/Avslut.astro';
+import PasserIhop from '../../components/PasserIhop.astro';
+import Avatar from '../../components/Avatar.astro';
+import { team } from '../../data/team';
+import { passarForTjanst } from '../../data/passar';
 import { tjanster, hittaTjanst, type Tjanst } from '../../data/tjanster';
 import { site } from '../../data/site';
 
@@ -19,6 +23,7 @@ interface Props {
 const { tjanst: t } = Astro.props;
 const relaterade = t.relaterade.map((s) => hittaTjanst(s)).filter((x): x is Tjanst => Boolean(x));
 const cta = t.cta;
+const personer = (t.utforare.personer ?? []).map((n) => team.find((p) => p.namn === n)).filter((p) => p !== undefined);
 const ctaAttr = cta.extern ? { rel: 'noopener', target: '_blank' } : {};
 const altAttr = t.altKontakt.extern ? { rel: 'noopener', target: '_blank' } : {};
 
@@ -41,15 +46,19 @@ const schema = [
         }
       : {}),
   },
-  {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: t.faq.map((f) => ({
-      '@type': 'Question',
-      name: f.fraga,
-      acceptedAnswer: { '@type': 'Answer', text: f.svar },
-    })),
-  },
+  ...(t.faq.length > 0
+    ? [
+        {
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          mainEntity: t.faq.map((f) => ({
+            '@type': 'Question',
+            name: f.fraga,
+            acceptedAnswer: { '@type': 'Answer', text: f.svar },
+          })),
+        },
+      ]
+    : []),
 ];
 ---
 
@@ -124,6 +133,21 @@ const schema = [
             <section aria-labelledby="utforare-rubrik" data-reveal>
               <h2 id="utforare-rubrik">{t.utforare.rubrik}</h2>
               <p>{t.utforare.text}</p>
+              {
+                personer.length > 0 && (
+                  <ul class="personrad">
+                    {personer.map((p) => (
+                      <li>
+                        <Avatar namn={p.namn} fotoId={p.foto} storlek="liten" />
+                        <span>
+                          <strong>{p.namn}</strong>
+                          <small>{p.roll}</small>
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                )
+              }
             </section>
           </div>
 
@@ -134,12 +158,18 @@ const schema = [
       </div>
     </section>
 
-    <section class="section section--tint" aria-labelledby="faq-rubrik">
-      <div class="container container--narrow">
-        <h2 id="faq-rubrik" data-reveal>Vanliga frågor om {t.namn.toLowerCase()}</h2>
-        <Faq poster={t.faq} />
-      </div>
-    </section>
+    {
+      t.faq.length > 0 && (
+        <section class="section section--tint" aria-labelledby="faq-rubrik">
+              <div class="container container--narrow">
+                <h2 id="faq-rubrik" data-reveal>Vanliga frågor om {t.namn.toLowerCase()}</h2>
+                <Faq poster={t.faq} />
+              </div>
+            </section>
+      )
+    }
+
+    <PasserIhop forslag={passarForTjanst(t.slug)} />
 
     <section class="section" aria-labelledby="rel-rubrik">
       <div class="container">
@@ -156,13 +186,12 @@ const schema = [
           }
           <article class="card card--link">
             <span class="card__icon"><Icon namn="box" /></span>
-            <h3><a class="card__link" href="/produkter/">Produkter</a></h3>
+            <h3><a class="card__link" href="/webbshop/">Webbshop</a></h3>
             <p>Foder och tillbehör till hund och katt.</p>
           </article>
         </div>
       </div>
     </section>
+    <Avslut />
   </div>
-
-  <SlutCta />
 </Bas>

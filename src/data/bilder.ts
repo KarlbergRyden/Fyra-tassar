@@ -5,14 +5,34 @@
  */
 import manifest from './bilder.manifest.json';
 
-export type BildNamn = keyof typeof manifest;
+/**
+ * De bilder som sajten alltid har. Egna foton (fasad, personporträtt, produkter …) ligger i samma
+ * manifest men hanteras via src/data/foton.ts, så att de får saknas.
+ */
+export type BildNamn =
+  | 'logo'
+  | 'logoBanner'
+  | 'hero'
+  | 'bannerHund'
+  | 'bannerSkog'
+  | 'bannerKatt'
+  | 'rottweiler'
+  | 'katt'
+  | 'bordercollie'
+  | 'team'
+  | 'kursledare';
+
+interface Variant {
+  fil: string;
+  bredd: number;
+  hojd: number;
+}
+const varianterAv = manifest as unknown as Record<BildNamn, Variant[]>;
 
 export const standardAlt: Record<BildNamn, string> = {
   logo: 'Fyra Tassar – logotyp',
   logoBanner: 'Fyra Tassar',
   hero: '',
-  kursband: '',
-  fragaband: '',
   bannerHund: '',
   bannerSkog: '',
   bannerKatt: '',
@@ -24,7 +44,7 @@ export const standardAlt: Record<BildNamn, string> = {
 };
 
 export function bild(namn: BildNamn) {
-  const varianter = manifest[namn];
+  const varianter = varianterAv[namn];
   const storst = varianter[varianter.length - 1];
   return {
     src: storst.fil,

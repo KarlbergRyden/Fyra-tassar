@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { byggMailto, forifyllMeddelande, reserveraLank, validera, type Formularvarden } from '../src/lib/formular';
+import { byggMailto, forifyllMeddelande, fragaLank, reserveraLank, validera, type Formularvarden } from '../src/lib/formular';
 
 const giltigt: Formularvarden = {
   namn: 'Anna Svensson',
@@ -66,5 +66,18 @@ describe('reservera / fråga om produkt', () => {
     expect(forifyllMeddelande('?produkt=')).toBeNull();
     const lang = forifyllMeddelande('?produkt=' + 'x'.repeat(500))!;
     expect(lang.length).toBeLessThan(200);
+  });
+});
+
+describe('fråga från foderguiden', () => {
+  it('förifyller meddelandet från ?fraga=', () => {
+    const lank = fragaLank('Jag vill ha hjälp att välja foder till min vuxen hund.');
+    expect(lank.startsWith('/kontakt/?fraga=')).toBe(true);
+    expect(lank.endsWith('#kontaktformular')).toBe(true);
+    const sok = lank.slice(lank.indexOf('?'), lank.indexOf('#'));
+    expect(forifyllMeddelande(sok)).toBe('Hej! Jag vill ha hjälp att välja foder till min vuxen hund.\n\n');
+  });
+  it('kortar onormalt långa frågor', () => {
+    expect(forifyllMeddelande('?fraga=' + 'x'.repeat(900))!.length).toBeLessThan(420);
   });
 });

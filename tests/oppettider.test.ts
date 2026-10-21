@@ -54,3 +54,31 @@ describe('oppetStatus', () => {
     expect(s.oppet).toBe(false);
   });
 });
+
+import { oppettiderKompakt } from '../src/lib/oppettider';
+import { oppettiderMonSun } from '../src/data/site';
+
+describe('oppettiderKompakt', () => {
+  it('slår ihop dagar med samma tider', () => {
+    expect(oppettiderKompakt(oppettiderMonSun)).toBe('Mån 10–18 · Tis 10–19 · Ons–fre 10–18 · Lör 10–15 · Sön stängt');
+  });
+  it('skriver halvtimmar med punkt', () => {
+    const dagar = [
+      { dag: 1 as const, namn: 'Måndag', oppnar: '09:30', stanger: '17:00' },
+      { dag: 2 as const, namn: 'Tisdag', oppnar: '09:30', stanger: '17:00' },
+    ];
+    expect(oppettiderKompakt(dagar)).toBe('Mån–tis 9.30–17');
+  });
+});
+
+describe('aktivaErbjudanden', () => {
+  it('räknar utgångsdatum i svensk tid, inte UTC', async () => {
+    const { erbjudanden, aktivaErbjudanden } = await import('../src/data/erbjudanden');
+    const kopia = [...erbjudanden];
+    erbjudanden.splice(0, erbjudanden.length, { ...kopia[0], giltigtTill: '2026-12-31' });
+    // 00:30 på nyårsdagen svensk tid = 23:30 UTC föregående dag: kampanjen har gått ut
+    expect(aktivaErbjudanden(new Date('2026-12-31T23:30:00Z'))).toHaveLength(0);
+    expect(aktivaErbjudanden(new Date('2026-12-31T22:30:00Z'))).toHaveLength(1);
+    erbjudanden.splice(0, erbjudanden.length, ...kopia);
+  });
+});

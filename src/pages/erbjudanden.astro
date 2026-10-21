@@ -2,6 +2,10 @@
 import Bas from '../layouts/Bas.astro';
 import Icon from '../components/Icon.astro';
 import PageBanner from '../components/PageBanner.astro';
+import Avslut from '../components/Avslut.astro';
+import PasserIhop from '../components/PasserIhop.astro';
+import { passarForKampanjer } from '../data/passar';
+import Tal from '../components/Tal.astro';
 import { aktivaErbjudanden, besparing } from '../data/erbjudanden';
 import { reserveraLank } from '../lib/formular';
 import { site } from '../data/site';
@@ -9,29 +13,50 @@ import { site } from '../data/site';
 const erbjudanden = aktivaErbjudanden();
 const facebook = site.sociala.find((s) => s.namn === 'Facebook')!;
 
-const regler = [
-  { stor: 'Gäller i butiken', text: 'Priserna gäller hos oss på Hantverkargatan. Vi har ingen webbutik.' },
-  { stor: 'Fler erbjudanden', text: 'Vi lägger ut erbjudanden löpande på vår Facebooksida.' },
-  { stor: 'Fråga oss', text: `Undrar du över ett erbjudande? Ring ${site.telefon.visning}.` },
-];
+// Strukturerad data så att kampanjerna kan visas med pris i Google. "Från"-priser blir ett prisspann.
+const sidUrl = new URL('/erbjudanden/', site.url).href;
+const schema = erbjudanden.length
+  ? [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        name: 'Foderkampanjer',
+        itemListElement: erbjudanden.map((e, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          item: {
+            '@type': 'Product',
+            name: e.namn,
+            description: e.detalj,
+            offers: {
+              '@type': e.franPris ? 'AggregateOffer' : 'Offer',
+              ...(e.franPris ? { lowPrice: e.pris } : { price: e.pris }),
+              priceCurrency: 'SEK',
+              url: sidUrl,
+              ...(e.giltigtTill ? { priceValidUntil: e.giltigtTill } : {}),
+              seller: { '@id': `${site.url}/#butik` },
+            },
+          },
+        })),
+      },
+    ]
+  : [];
 ---
 
 <Bas
   title="Erbjudanden på hund- och kattfoder"
   description="Aktuella foderkampanjer hos Fyra Tassar i Borlänge: FourFriends, HappyDog, Happycat och Taste of the Wild till kampanjpris."
+  jsonLd={schema}
 >
   <div class="page-dark">
     <PageBanner
       titel="Foderkampanjer i butiken"
-      ingress="Kampanjpriser på torrfoder till hund och katt. Se vad du sparar och kom förbi."
+      ingress="Kampanjpriser på torrfoder till hund och katt."
       steg={[{ text: 'Erbjudanden' }]}
       etikett="Erbjudanden"
     >
-      <a class="btn" href={site.adress.kartaUrl} target="_blank" rel="noopener noreferrer" data-spor="karta"
-        ><Icon namn="pin" storlek={18} />Hitta hit<span class="sr-only"> (öppnas i ny flik)</span></a
-      >
-      <a class="btn btn--light" href={facebook.url} target="_blank" rel="noopener noreferrer"
-        ><Icon namn="facebook" storlek={18} />Följ oss<span class="sr-only"> (öppnas i ny flik)</span></a
+      <a class="btn" href={facebook.url} target="_blank" rel="noopener noreferrer"
+        ><Icon namn="facebook" storlek={18} />Följ oss på Facebook<span class="sr-only"> (öppnas i ny flik)</span></a
       >
     </PageBanner>
 
@@ -59,7 +84,7 @@ const regler = [
                 {erbjudanden.map((e) => {
                   const b = besparing(e);
                   return (
-                    <article class="deal-xl" data-djur={e.djur.join(' ')} data-deal data-spot>
+                    <article class="deal-xl" data-djur={e.djur.join(' ')} data-deal data-tilt>
                       <div class="deal-xl__top">
                         <span class="badge">{e.djur.map((d) => (d === 'hund' ? 'Hund' : 'Katt')).join(' · ')}</span>
                         <span class="deal-xl__spar">
@@ -69,7 +94,7 @@ const regler = [
                       <h3>{e.namn}</h3>
                       <p>{e.detalj}</p>
                       <div class="deal-xl__prices">
-                        <span class="deal-xl__pris">{e.pris}<span> kr</span></span>
+                        <span class="deal-xl__pris"><Tal varde={e.pris} /><span> kr</span></span>
                         <span class="deal-xl__old">
                           <span class="sr-only">Ordinarie pris </span>
                           {e.franPris ? 'från ' : ''}
@@ -83,6 +108,7 @@ const regler = [
                   );
                 })}
               </div>
+              <p class="text-soft mt-6 mb-0">Priserna gäller i butiken. Fler erbjudanden lägger vi ut på Facebook.</p>
             </>
           ) : (
             <div class="card">
@@ -97,23 +123,9 @@ const regler = [
       </div>
     </section>
 
-    <section class="section section--tint" aria-labelledby="regler-rubrik">
-      <div class="container">
-        <div class="section-head" data-reveal>
-          <div>
-            <p class="eyebrow">Så fungerar det</p>
-            <h2 id="regler-rubrik">Enkelt och tydligt</h2>
-          </div>
-        </div>
-        <ul class="facts" data-reveal-stagger>
-          {regler.map((r) => <li><strong>{r.stor}</strong><p>{r.text}</p></li>)}
-        </ul>
-        <div class="btn-row mt-6">
-          <a class="btn" href="/produkter/">Se hela sortimentet</a>
-          <a class="btn btn--light" href={site.telefon.href} data-spor="ring"><Icon namn="phone" storlek={18} />Ring {site.telefon.visning}</a>
-        </div>
-      </div>
-    </section>
+    <PasserIhop forslag={passarForKampanjer()} />
+
+    <Avslut rubrik="Kom förbi och se kampanjerna" text="Vi hjälper dig gärna att hitta rätt foder." />
   </div>
 </Bas>
 

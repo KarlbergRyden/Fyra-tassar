@@ -1,6 +1,9 @@
 ---
 import '@fontsource-variable/source-sans-3';
+import '@fontsource-variable/playfair-display/wght.css';
 import '../styles/global.css';
+import latinRubrikTypsnitt from '../../node_modules/@fontsource-variable/playfair-display/files/playfair-display-latin-wght-normal.woff2?url';
+import latinTypsnitt from '../../node_modules/@fontsource-variable/source-sans-3/files/source-sans-3-latin-wght-normal.woff2?url';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import SnabbFalt from '../components/SnabbFalt.astro';
@@ -32,7 +35,7 @@ const foretag = {
   legalName: site.juridisktNamn,
   description: site.beskrivning,
   url: site.url,
-  telephone: '+46243-86860',
+  telephone: site.telefon.href.replace('tel:', ''),
   email: site.epost,
   image: ogUrl,
   address: {
@@ -50,7 +53,7 @@ const foretag = {
 ---
 
 <!doctype html>
-<html lang="sv">
+<html lang="sv" data-rorelse={site.rorelse}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -58,8 +61,10 @@ const foretag = {
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     {noindex && <meta name="robots" content="noindex, follow" />}
-    <meta name="theme-color" content="#d4147b" />
+    <meta name="theme-color" content="#141414" />
     <meta name="generator" content={Astro.generator} />
+    <link rel="preload" href={latinTypsnitt} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={latinRubrikTypsnitt} as="font" type="font/woff2" crossorigin />
 
     <link rel="icon" href="/favicon-48.png" type="image/png" sizes="48x48" />
     <link rel="icon" href="/favicon-192.png" type="image/png" sizes="192x192" />
@@ -84,6 +89,27 @@ const foretag = {
       document.documentElement.classList.add('js');
     </script>
 
+    {
+      site.analys.plausibleDomain && (
+        <>
+          <script is:inline>
+            window.plausible = window.plausible || function () { (window.plausible.q = window.plausible.q || []).push(arguments); };
+          </script>
+          <script is:inline defer data-domain={site.analys.plausibleDomain} src={site.analys.plausibleSkript}></script>
+        </>
+      )
+    }
+    {
+      !site.analys.plausibleDomain && site.analys.goatcounter && (
+        <script
+          is:inline
+          async
+          data-goatcounter={`https://${site.analys.goatcounter}.goatcounter.com/count`}
+          src="//gc.zgo.at/count.js"
+        />
+      )
+    }
+
     <noscript>
       <style>
         .nav-toggle {
@@ -105,23 +131,14 @@ const foretag = {
     <SnabbFalt />
 
     <script>
-      // Ljuspunkt som följer musen över element med data-spot (bara med mus, och inte vid reducerad rörelse)
-      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches && window.matchMedia('(pointer: fine)').matches) {
-        document.querySelectorAll<HTMLElement>('[data-spot]').forEach((el) => {
-          el.addEventListener('pointermove', (e) => {
-            const r = el.getBoundingClientRect();
-            el.style.setProperty('--mx', `${e.clientX - r.left}px`);
-            el.style.setProperty('--my', `${e.clientY - r.top}px`);
-          });
-        });
-      }
+      import '../scripts/liv';
     </script>
 
     <script>
       // Mjuk inglidning av innehåll när det kommer in i bild. Utan JS (eller med reducerad
       // rörelse) visas allt direkt.
       const reducerad = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const mal = document.querySelectorAll<HTMLElement>('[data-reveal], [data-reveal-stagger], [data-inview]');
+      const mal = document.querySelectorAll<HTMLElement>('[data-reveal], [data-reveal-stagger], [data-inview], [data-tassspar]');
       if (reducerad || !('IntersectionObserver' in window)) {
         mal.forEach((el) => el.classList.add('is-in'));
       } else {

@@ -1,0 +1,36 @@
+---
+/** Rutor som föreslår nästa steg, byggda av befintlig data (se src/data/passar.ts). */
+import Icon from './Icon.astro';
+import type { Forslag } from '../data/passar';
+
+interface Props {
+  forslag: Forslag[];
+  rubrik?: string;
+}
+const { forslag, rubrik = 'Passar bra ihop med' } = Astro.props;
+const extern = (href: string) => href.startsWith('http');
+---
+
+{
+  forslag.length > 0 && (
+    <section class="section section--tight" aria-labelledby="passar-ihop-rubrik">
+      <div class="container">
+        <h2 id="passar-ihop-rubrik" data-reveal>{rubrik}</h2>
+        <ul class="passar" data-reveal-stagger>
+          {forslag.map((f) => (
+            <li>
+              <a class="passar__kort" href={f.href} data-spor={f.spor} rel={extern(f.href) ? 'noopener' : undefined}>
+                <span class="passar__ikon"><Icon namn={f.ikon} storlek={22} /></span>
+                <span class="passar__text">
+                  <strong>{f.rubrik}</strong>
+                  <span>{f.text}</span>
+                </span>
+                <Icon namn="arrow" storlek={18} class="passar__pil" />
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )
+}

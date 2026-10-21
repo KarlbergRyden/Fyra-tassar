@@ -1,7 +1,7 @@
 ---
 /**
- * Sidbanner för undersidor – som originalets bildbanner: foto med mörk toning
- * (eller helsvart band utan foto), brödsmulor, H1 och ingress. Knappar via slot.
+ * Sidbanner för undersidor. Samma språk som heroerna: mörk yta med rosa sken (eller foto),
+ * brödsmulor, rubrik i medium vikt som glider in ord för ord, ingress och knappar.
  */
 import Breadcrumbs from './Breadcrumbs.astro';
 import Bild from './Bild.astro';
@@ -17,6 +17,7 @@ interface Props {
   etikett?: string;
 }
 const { titel, ingress, steg, foto, ikon, etikett } = Astro.props;
+const ord = titel.split(' ');
 ---
 
 <section class:list={['page-banner', 'on-dark', foto && 'page-banner--foto']}>
@@ -26,7 +27,18 @@ const { titel, ingress, steg, foto, ikon, etikett } = Astro.props;
     <div>
       {ikon && <span class="card__icon" style="margin-bottom: 1rem"><Icon namn={ikon} /></span>}
       {etikett && <p class="eyebrow">{etikett}</p>}
-      <h1>{titel}</h1>
+      <h1>
+        {
+          ord.map((o, i) => (
+            <>
+              {i > 0 && ' '}
+              <span class="w">
+                <span style={`--i:${i}`}>{o}</span>
+              </span>
+            </>
+          ))
+        }
+      </h1>
       {ingress && <p class="lead">{ingress}</p>}
       <div class="btn-row"><slot /></div>
     </div>

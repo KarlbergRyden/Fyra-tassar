@@ -32,11 +32,19 @@ const urlFran = (fil) => {
 };
 
 const sidor = new Map();
-for (const fil of html) sidor.set(urlFran(fil), readFileSync(fil, 'utf8'));
+const omdirigeringar = new Set();
+for (const fil of html) {
+  const kalla = readFileSync(fil, 'utf8');
+  if (/http-equiv="refresh"/i.test(kalla)) {
+    omdirigeringar.add(urlFran(fil));
+    continue;
+  }
+  sidor.set(urlFran(fil), kalla);
+}
 
 const finns = (url) => {
   const ren = url.split('#')[0].split('?')[0];
-  if (sidor.has(ren)) return true;
+  if (sidor.has(ren) || omdirigeringar.has(ren)) return true;
   const fil = join(dist, ren);
   return existsSync(fil) && statSync(fil).isFile();
 };

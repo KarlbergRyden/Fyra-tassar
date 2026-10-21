@@ -3,6 +3,8 @@
  * Källa: fyratassar.nu/Aktuellt. ÄGAREN MÅSTE bekräfta att priserna fortfarande gäller
  * (sätt `aktiv: false` för att dölja en kampanj, eller `giltigtTill` för slutdatum).
  */
+import { svenskTid } from '../lib/oppettider';
+
 export interface Erbjudande {
   namn: string;
   detalj: string;
@@ -55,7 +57,7 @@ export const erbjudanden: Erbjudande[] = [
 ];
 
 export function aktivaErbjudanden(nu = new Date()) {
-  const idag = nu.toISOString().slice(0, 10);
+  const idag = svenskTid(nu).datum; // svensk dag, inte UTC – annars lever en kampanj kvar ett par timmar efter midnatt
   return erbjudanden.filter((e) => e.aktiv && (!e.giltigtTill || e.giltigtTill >= idag));
 }
 
